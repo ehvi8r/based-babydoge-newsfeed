@@ -8,8 +8,8 @@ const Index = () => {
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-7xl mx-auto">
         <header className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Crypto Dashboard</h1>
-          <p className="text-muted-foreground">Welcome back to your portfolio</p>
+          <h1 className="text-3xl font-bold mb-2">Based BabyDoge Dashboard</h1>
+          <p className="text-muted-foreground">Welcome back to your portfolio (More on the way)</p>
         </header>
         
         <MarketStats />
