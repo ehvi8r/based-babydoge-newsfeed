@@ -17,82 +17,114 @@ interface BaseCurrency {
   price_change_percentage_24h: number;
 }
 
-interface ContractTokenData {
+interface GeckoTerminalToken {
   id: string;
-  symbol: string;
-  name: string;
-  image: {
-    thumb: string;
-    small: string;
-    large: string;
-  };
-  market_data: {
-    current_price: {
-      usd: number;
-    };
-    market_cap: {
-      usd: number;
-    };
-    price_change_percentage_24h: number;
+  type: string;
+  attributes: {
+    address: string;
+    name: string;
+    symbol: string;
+    image_url: string;
+    coingecko_coin_id: string;
   };
 }
 
-const fetchContractToken = async (contractAddress: string): Promise<BaseCurrency | null> => {
-  try {
-    const data = await fetchWithCache<ContractTokenData>(
-      `https://api.coingecko.com/api/v3/coins/base/contract/${contractAddress}`,
-      `contract-${contractAddress}`,
-      10
-    );
-
-    return {
-      id: data.id,
-      name: data.name,
-      symbol: data.symbol,
-      image: data.image.small,
-      current_price: data.market_data.current_price.usd,
-      market_cap: data.market_data.market_cap.usd,
-      price_change_percentage_24h: data.market_data.price_change_percentage_24h
+interface GeckoTerminalPool {
+  id: string;
+  type: string;
+  attributes: {
+    name: string;
+    address: string;
+    base_token_price_usd: string;
+    base_token_price_native_currency: string;
+    quote_token_price_usd: string;
+    base_token_price_change_percentage: {
+      h1: string;
+      h24: string;
     };
-  } catch (error) {
-    console.error(`Failed to fetch contract token ${contractAddress}:`, error);
-    return null;
-  }
-};
+    market_cap_usd: string;
+    reserve_in_usd: string;
+  };
+  relationships: {
+    base_token: {
+      data: {
+        id: string;
+        type: string;
+      };
+    };
+    quote_token: {
+      data: {
+        id: string;
+        type: string;
+      };
+    };
+  };
+}
+
+interface GeckoTerminalResponse {
+  data: GeckoTerminalPool[];
+  included: GeckoTerminalToken[];
+}
 
 const fetchBaseCurrencies = async (): Promise<BaseCurrency[]> => {
-  // Fetch standard tokens from CoinGecko
-  const baseTokenIds = [
-    'coinbase-wrapped-staked-eth',
-    'usd-coin',
-    'aerodrome-finance',
-    'based-pepe',
-    'higher',
-    'degen-base',
-    'seamless-protocol',
-    'moonwell',
-    'prime',
-    'toshi-base'
-  ];
-  
-  const idsParam = baseTokenIds.join(',');
-  
-  const standardTokens = await fetchWithCache<BaseCurrency[]>(
-    `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${idsParam}&order=market_cap_desc&per_page=10&page=1&sparkline=false`,
-    'base-currencies',
-    10
-  );
+  try {
+    // Fetch trending pools on Base network from GeckoTerminal
+    const response = await fetchWithCache<GeckoTerminalResponse>(
+      'https://api.geckoterminal.com/api/v2/networks/base/trending_pools?include=base_token',
+      'base-trending-pools',
+      5 // 5 minute cache for real-time data
+    );
 
-  // Fetch custom contract tokens
-  const customContracts = [
-    '0x459F65A7aaB8c08220ac636Ef633508E697e15d8' // Toshiba
-  ];
+    const pools = response.data;
+    const tokens = response.included;
 
-  const contractTokenPromises = customContracts.map(address => fetchContractToken(address));
-  const contractTokens = (await Promise.all(contractTokenPromises)).filter(token => token !== null) as BaseCurrency[];
+    // Create a map of token data by ID
+    const tokenMap = new Map();
+    tokens.forEach(token => {
+      tokenMap.set(token.id, token);
+    });
 
-  // Combine and return all tokens
-  return [...standardTokens, ...contractTokens];
+    // Convert pool data to BaseCurrency format
+    const baseCurrencies: BaseCurrency[] = pools
+      .slice(0, 10) // Take top 10 trending pools
+      .map((pool, index) => {
+        const baseToken = tokenMap.get(pool.relationships.base_token.data.id);
+        if (!baseToken) return null;
+
+        return {
+          id: baseToken.attributes.address,
+          name: baseToken.attributes.name,
+          symbol: baseToken.attributes.symbol,
+          image: baseToken.attributes.image_url || '',
+          current_price: parseFloat(pool.attributes.base_token_price_usd),
+          market_cap: parseFloat(pool.attributes.market_cap_usd) || parseFloat(pool.attributes.reserve_in_usd),
+          price_change_percentage_24h: parseFloat(pool.attributes.base_token_price_change_percentage.h24 || '0')
+        };
+      })
+      .filter(currency => currency !== null) as BaseCurrency[];
+
+    return baseCurrencies;
+  } catch (error) {
+    console.error('Failed to fetch from GeckoTerminal:', error);
+    
+    // Fallback to standard CoinGecko tokens if GeckoTerminal fails
+    const fallbackTokenIds = [
+      'coinbase-wrapped-staked-eth',
+      'usd-coin',
+      'aerodrome-finance',
+      'based-pepe',
+      'higher',
+      'degen-base'
+    ];
+    
+    const idsParam = fallbackTokenIds.join(',');
+    
+    return await fetchWithCache<BaseCurrency[]>(
+      `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${idsParam}&order=market_cap_desc&per_page=6&page=1&sparkline=false`,
+      'base-currencies-fallback',
+      10
+    );
+  }
 };
 
 const BaseCurrencies = ({ onCurrencySelect }: BaseCurrenciesProps) => {
@@ -118,7 +150,7 @@ const BaseCurrencies = ({ onCurrencySelect }: BaseCurrenciesProps) => {
             alt="Base Chain" 
             className="w-6 h-6"
           />
-          <h2 className="text-xl font-semibold">Top Base Currencies</h2>
+          <h2 className="text-xl font-semibold">Trending Base Pools</h2>
         </div>
         <div className="animate-pulse">
           {[...Array(5)].map((_, i) => (
@@ -147,7 +179,7 @@ const BaseCurrencies = ({ onCurrencySelect }: BaseCurrenciesProps) => {
             alt="Base Chain" 
             className="w-6 h-6"
           />
-          <h2 className="text-xl font-semibold">Top Base Currencies</h2>
+          <h2 className="text-xl font-semibold">Trending Base Pools</h2>
         </div>
         <div className="flex items-center justify-center py-8">
           <div className="flex items-center gap-3 text-warning">
@@ -171,7 +203,7 @@ const BaseCurrencies = ({ onCurrencySelect }: BaseCurrenciesProps) => {
           className="w-6 h-6"
           fallbackText="B"
         />
-        <h2 className="text-xl font-semibold">Top Base Currencies</h2>
+        <h2 className="text-xl font-semibold">Trending Base Pools</h2>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full">
@@ -181,7 +213,7 @@ const BaseCurrencies = ({ onCurrencySelect }: BaseCurrenciesProps) => {
               <th className="pb-4">Name</th>
               <th className="pb-4">Price</th>
               <th className="pb-4">24h Change</th>
-              <th className="pb-4">Market Cap</th>
+              <th className="pb-4">Liquidity</th>
             </tr>
           </thead>
           <tbody>
