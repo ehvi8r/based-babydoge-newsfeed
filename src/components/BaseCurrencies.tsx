@@ -1,3 +1,4 @@
+
 import { ArrowUpIcon, ArrowDownIcon, AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchWithCache } from "@/utils/apiUtils";
@@ -38,9 +39,9 @@ interface GeckoTerminalPool {
     base_token_price_usd: string;
     base_token_price_native_currency: string;
     quote_token_price_usd: string;
-    base_token_price_change_percentage: {
-      h1: string;
-      h24: string;
+    base_token_price_change_percentage?: {
+      h1?: string;
+      h24?: string;
     };
     market_cap_usd: string;
     reserve_in_usd: string;
@@ -91,6 +92,9 @@ const fetchBaseCurrencies = async (): Promise<BaseCurrency[]> => {
         const baseToken = tokenMap.get(pool.relationships.base_token.data.id);
         if (!baseToken) return null;
 
+        // Safely access price change percentage with fallback
+        const priceChangePercentage = pool.attributes.base_token_price_change_percentage?.h24 || '0';
+
         return {
           id: baseToken.attributes.address,
           name: baseToken.attributes.name,
@@ -98,7 +102,7 @@ const fetchBaseCurrencies = async (): Promise<BaseCurrency[]> => {
           image: baseToken.attributes.image_url || '',
           current_price: parseFloat(pool.attributes.base_token_price_usd),
           market_cap: parseFloat(pool.attributes.market_cap_usd) || parseFloat(pool.attributes.reserve_in_usd),
-          price_change_percentage_24h: parseFloat(pool.attributes.base_token_price_change_percentage.h24 || '0')
+          price_change_percentage_24h: parseFloat(priceChangePercentage)
         };
       })
       .filter(currency => currency !== null) as BaseCurrency[];
