@@ -20,33 +20,40 @@ interface BaseCurrency {
 
 const fetchTopBaseCurrencies = async (): Promise<BaseCurrency[]> => {
   try {
-    // Fetch specific Base ecosystem tokens including top ones plus Toshi and Toshiba
-    const baseTokenIds = [
+    // Fetch top Base ecosystem tokens
+    const topBaseTokenIds = [
       'coinbase-wrapped-staked-eth',
       'usd-coin',
       'aerodrome-finance',
+      'based-brett',
+      'degen-base',
+      'basenji',
       'based-pepe',
       'higher',
-      'degen-base',
       'mochi-the-dog',
-      'basenji',
-      'toshi',
-      'toshiba-inu',
-      'based-brett',
       'keycat'
     ];
     
-    const idsParam = baseTokenIds.join(',');
+    // Fetch Toshi and Toshiba separately to ensure they appear as #11 and #12
+    const specialTokenIds = ['toshi', 'toshiba-inu'];
     
-    return await fetchWithCache<BaseCurrency[]>(
-      `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${idsParam}&order=market_cap_desc&per_page=12&page=1&sparkline=false`,
-      'top-base-currencies',
-      10 // 10 minute cache
-    );
+    const [topTokens, specialTokens] = await Promise.all([
+      fetchWithCache<BaseCurrency[]>(
+        `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${topBaseTokenIds.join(',')}&order=market_cap_desc&per_page=10&page=1&sparkline=false`,
+        'top-base-currencies-main',
+        10 // 10 minute cache
+      ),
+      fetchWithCache<BaseCurrency[]>(
+        `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${specialTokenIds.join(',')}&order=market_cap_desc&per_page=2&page=1&sparkline=false`,
+        'top-base-currencies-special',
+        10 // 10 minute cache
+      )
+    ]);
+    
+    // Combine top 10 with Toshi and Toshiba
+    return [...topTokens.slice(0, 10), ...specialTokens];
   } catch (error) {
     console.error('Failed to fetch Top Base Currencies:', error);
-    
-    // Return empty array if fetch fails
     return [];
   }
 };
@@ -61,7 +68,7 @@ const TopBaseCurrencies = ({ onCurrencySelect }: TopBaseCurrenciesProps) => {
   });
 
   const handleRowClick = (currency: BaseCurrency) => {
-    const tradingViewSymbol = `COINBASE:${currency.symbol.toUpperCase()}USD`;
+    const tradingViewSymbol = `COINBASE:${currency.symbol.toUpperCase()}USDC`;
     onCurrencySelect(tradingViewSymbol, currency.name);
   };
 
@@ -77,7 +84,7 @@ const TopBaseCurrencies = ({ onCurrencySelect }: TopBaseCurrenciesProps) => {
           <h2 className="text-xl font-semibold">Top Base Cryptocurrencies</h2>
         </div>
         <div className="animate-pulse">
-          {[...Array(5)].map((_, i) => (
+          {[...Array(12)].map((_, i) => (
             <div key={i} className="flex items-center justify-between py-4 border-t border-secondary">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-secondary rounded-full"></div>
@@ -141,7 +148,7 @@ const TopBaseCurrencies = ({ onCurrencySelect }: TopBaseCurrenciesProps) => {
             </tr>
           </thead>
           <tbody>
-            {baseCurrencies?.slice(0, 10).map((currency, index) => (
+            {baseCurrencies?.map((currency, index) => (
               <tr 
                 key={currency.id} 
                 className="border-t border-secondary hover:bg-secondary/20 cursor-pointer transition-colors"
