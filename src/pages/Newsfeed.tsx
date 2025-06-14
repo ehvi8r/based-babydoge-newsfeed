@@ -1,7 +1,25 @@
 
+import { useState } from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import NewsCard from "@/components/NewsCard";
+import NewsModal from "@/components/NewsModal";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { mockNewsData, NewsItem } from "@/data/newsData";
 
 const Newsfeed = () => {
+  const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleNewsClick = (news: NewsItem) => {
+    setSelectedNews(news);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedNews(null);
+  };
+
   return (
     <div className="p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
@@ -14,13 +32,26 @@ const Newsfeed = () => {
         
         <ErrorBoundary>
           <div className="glass-card rounded-lg p-6 animate-fade-in">
-            <h3 className="text-xl font-semibold mb-4">Coming Soon</h3>
-            <p className="text-muted-foreground">
-              The newsfeed feature is being prepared. This will include the latest cryptocurrency news, 
-              Based BabyDoge updates, and market insights.
-            </p>
+            <h3 className="text-xl font-semibold mb-6">Latest Cryptocurrency News</h3>
+            <ScrollArea className="h-[calc(100vh-300px)]">
+              <div className="space-y-4 pr-4">
+                {mockNewsData.map((news) => (
+                  <NewsCard 
+                    key={news.id} 
+                    news={news} 
+                    onClick={handleNewsClick}
+                  />
+                ))}
+              </div>
+            </ScrollArea>
           </div>
         </ErrorBoundary>
+
+        <NewsModal 
+          news={selectedNews}
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+        />
       </div>
     </div>
   );
