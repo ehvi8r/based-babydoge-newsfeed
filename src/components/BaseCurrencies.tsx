@@ -112,6 +112,24 @@ const fetchBaseCurrencies = async (): Promise<BaseCurrency[]> => {
           current_price: 15.67,
           market_cap: 25600000,
           price_change_percentage_24h: -2.8
+        },
+        {
+          id: "toshi",
+          name: "Toshi",
+          symbol: "TOSHI",
+          image: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9",
+          current_price: 0.0123,
+          market_cap: 23400000,
+          price_change_percentage_24h: 6.8
+        },
+        {
+          id: "toshiba",
+          name: "Toshiba",
+          symbol: "TOSHIBA",
+          image: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
+          current_price: 0.0089,
+          market_cap: 18900000,
+          price_change_percentage_24h: -4.5
         }
       ]);
     }, 500);
