@@ -7,6 +7,7 @@ import CryptoList from "@/components/CryptoList";
 import TopBaseCurrencies from "@/components/TopBaseCurrencies";
 import BaseCurrencies from "@/components/BaseCurrencies";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
+import UniswapWidget from "@/components/UniswapWidget";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
 const Dashboard = () => {
@@ -39,9 +40,12 @@ const Dashboard = () => {
         </ErrorBoundary>
         
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8 mb-8">
-          <div className="xl:col-span-2">
+          <div className="xl:col-span-2 space-y-6">
             <ErrorBoundary>
               <CryptoChart symbol={selectedCurrency.symbol} name={selectedCurrency.name} />
+            </ErrorBoundary>
+            <ErrorBoundary>
+              <UniswapWidget />
             </ErrorBoundary>
           </div>
           <div>
