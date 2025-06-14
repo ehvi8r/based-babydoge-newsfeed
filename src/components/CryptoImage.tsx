@@ -14,6 +14,7 @@ const CryptoImage = ({ src, alt, className = "w-8 h-8 rounded-full", fallbackTex
   const [hasError, setHasError] = useState(false);
 
   const handleLoad = () => {
+    console.log(`Image loaded successfully: ${src}`);
     setIsLoading(false);
     setHasError(false);
   };
@@ -24,10 +25,16 @@ const CryptoImage = ({ src, alt, className = "w-8 h-8 rounded-full", fallbackTex
     setHasError(true);
   };
 
-  if (isLoading) {
-    return <Skeleton className={className} />;
+  // Show fallback immediately if no src provided
+  if (!src) {
+    return (
+      <div className={`${className} bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold`}>
+        {fallbackText || alt.charAt(0).toUpperCase()}
+      </div>
+    );
   }
 
+  // Show fallback if error occurred
   if (hasError) {
     return (
       <div className={`${className} bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold`}>
@@ -37,13 +44,17 @@ const CryptoImage = ({ src, alt, className = "w-8 h-8 rounded-full", fallbackTex
   }
 
   return (
-    <img
-      src={src}
-      alt={alt}
-      className={className}
-      onLoad={handleLoad}
-      onError={handleError}
-    />
+    <>
+      {isLoading && <Skeleton className={className} />}
+      <img
+        src={src}
+        alt={alt}
+        className={`${className} ${isLoading ? 'hidden' : 'block'}`}
+        onLoad={handleLoad}
+        onError={handleError}
+        style={{ display: isLoading ? 'none' : 'block' }}
+      />
+    </>
   );
 };
 
