@@ -2,10 +2,10 @@
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
 import { useQuery } from "@tanstack/react-query";
 import { AlertTriangle } from "lucide-react";
-import { fetchWithCache } from "@/utils/apiUtils";
+import { fetchWithCache, BitcoinPriceData } from "@/utils/apiUtils";
 
 const fetchBitcoinPrices = async () => {
-  const data = await fetchWithCache(
+  const data = await fetchWithCache<BitcoinPriceData>(
     "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=7&interval=daily",
     'bitcoin-prices',
     10 // 10 minute cache

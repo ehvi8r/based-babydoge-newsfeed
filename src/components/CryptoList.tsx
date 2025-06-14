@@ -1,10 +1,10 @@
 
 import { ArrowUpIcon, ArrowDownIcon, AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchWithCache } from "@/utils/apiUtils";
+import { fetchWithCache, CryptoData } from "@/utils/apiUtils";
 
-const fetchCryptoData = async () => {
-  return fetchWithCache(
+const fetchCryptoData = async (): Promise<CryptoData[]> => {
+  return fetchWithCache<CryptoData[]>(
     'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false',
     'crypto-list',
     10 // 10 minute cache

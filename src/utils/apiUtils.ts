@@ -18,6 +18,30 @@ class ApiError extends Error {
   }
 }
 
+// Type definitions for API responses
+export interface GlobalData {
+  data: {
+    total_market_cap: { usd: number };
+    total_volume: { usd: number };
+    market_cap_percentage: { btc: number };
+    market_cap_change_percentage_24h_usd: number;
+  };
+}
+
+export interface CryptoData {
+  id: string;
+  name: string;
+  symbol: string;
+  image: string;
+  current_price: number;
+  market_cap: number;
+  price_change_percentage_24h: number;
+}
+
+export interface BitcoinPriceData {
+  prices: [number, number][];
+}
+
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export const fetchWithRetry = async <T>(

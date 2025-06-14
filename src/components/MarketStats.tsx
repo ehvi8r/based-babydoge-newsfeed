@@ -1,10 +1,10 @@
 
 import { ArrowUpIcon, ArrowDownIcon, TrendingUpIcon, AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchWithCache } from "@/utils/apiUtils";
+import { fetchWithCache, GlobalData } from "@/utils/apiUtils";
 
-const fetchGlobalData = async () => {
-  return fetchWithCache(
+const fetchGlobalData = async (): Promise<GlobalData> => {
+  return fetchWithCache<GlobalData>(
     'https://api.coingecko.com/api/v3/global',
     'global-data',
     10 // 10 minute cache
