@@ -4,6 +4,7 @@ import MarketStats from "@/components/MarketStats";
 import CryptoChart from "@/components/CryptoChart";
 import PortfolioCard from "@/components/PortfolioCard";
 import CryptoList from "@/components/CryptoList";
+import TopBaseCurrencies from "@/components/TopBaseCurrencies";
 import BaseCurrencies from "@/components/BaseCurrencies";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -63,6 +64,12 @@ const Index = () => {
           <ErrorBoundary>
             <CryptoList onCurrencySelect={handleCurrencySelect} />
           </ErrorBoundary>
+          <ErrorBoundary>
+            <TopBaseCurrencies onCurrencySelect={handleCurrencySelect} />
+          </ErrorBoundary>
+        </div>
+        
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8 mb-8">
           <ErrorBoundary>
             <BaseCurrencies onCurrencySelect={handleCurrencySelect} />
           </ErrorBoundary>
