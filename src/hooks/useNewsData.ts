@@ -213,6 +213,7 @@ const generateUniqueNews = (): NewsItem[] => {
 
 const fetchCryptoNews = async (): Promise<NewsItem[]> => {
   const newsItems: NewsItem[] = [];
+  const seenTitles = new Set<string>();
 
   try {
     console.log('Fetching cryptocurrency news...');
@@ -227,21 +228,39 @@ const fetchCryptoNews = async (): Promise<NewsItem[]> => {
       console.log('CryptoPanic data:', cryptoPanicData);
       
       if (cryptoPanicData.results && cryptoPanicData.results.length > 0) {
-        const panicItems = cryptoPanicData.results.slice(0, 15).map((item: CryptoPanicItem, index: number) => ({
-          id: `panic-${item.id}`,
-          title: item.title,
-          summary: item.title.length > 150 ? item.title.substring(0, 150) + '...' : item.title,
-          category: 'Cryptocurrency',
-          date: formatDate(item.published_at),
-          readTime: estimateReadTime(item.title),
-          imageUrl: `https://picsum.photos/400/300?random=${index + 100}`,
-          content: `Read the full article at the source for complete details about: ${item.title}`,
-          source: item.source?.title || 'CryptoPanic',
-          url: item.url
-        }));
+        const panicItems = cryptoPanicData.results
+          .filter((item: CryptoPanicItem) => {
+            // Normalize title by removing common prefixes and suffixes that might indicate updates
+            const normalizedTitle = item.title
+              .replace(/^(Updated:|Update:|\[Update\]|\[Updated\])/i, '')
+              .replace(/\s*-\s*(Updated|Update)$/i, '')
+              .trim();
+            
+            // Check if we've already seen this title
+            if (seenTitles.has(normalizedTitle.toLowerCase())) {
+              console.log(`Filtering out duplicate: ${item.title}`);
+              return false;
+            }
+            
+            seenTitles.add(normalizedTitle.toLowerCase());
+            return true;
+          })
+          .slice(0, 15)
+          .map((item: CryptoPanicItem, index: number) => ({
+            id: `panic-${item.id}`,
+            title: item.title,
+            summary: item.title.length > 150 ? item.title.substring(0, 150) + '...' : item.title,
+            category: 'Cryptocurrency',
+            date: formatDate(item.published_at),
+            readTime: estimateReadTime(item.title),
+            imageUrl: `https://picsum.photos/400/300?random=${index + 100}`,
+            content: `Read the full article at the source for complete details about: ${item.title}`,
+            source: item.source?.title || 'CryptoPanic',
+            url: item.url
+          }));
         
         newsItems.push(...panicItems);
-        console.log(`Added ${panicItems.length} items from CryptoPanic`);
+        console.log(`Added ${panicItems.length} unique items from CryptoPanic`);
       }
     }
   } catch (error) {
@@ -253,12 +272,23 @@ const fetchCryptoNews = async (): Promise<NewsItem[]> => {
   const remainingSlots = 30 - newsItems.length;
   
   if (remainingSlots > 0) {
-    newsItems.push(...generatedNews.slice(0, remainingSlots));
+    // Also check generated news for any potential title conflicts
+    const filteredGeneratedNews = generatedNews.filter(news => {
+      const normalizedTitle = news.title.toLowerCase();
+      if (seenTitles.has(normalizedTitle)) {
+        return false;
+      }
+      seenTitles.add(normalizedTitle);
+      return true;
+    });
+    
+    newsItems.push(...filteredGeneratedNews.slice(0, remainingSlots));
   }
 
   // Ensure we have exactly 30 unique items
   const uniqueNewsItems = newsItems.slice(0, 30);
   console.log(`Total unique news items: ${uniqueNewsItems.length}`);
+  console.log(`Unique titles: ${Array.from(seenTitles).length}`);
   
   return uniqueNewsItems;
 };
