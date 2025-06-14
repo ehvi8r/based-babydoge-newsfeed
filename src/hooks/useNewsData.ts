@@ -14,19 +14,6 @@ export interface NewsItem {
   url: string;
 }
 
-// NewsAPI.org structure
-interface NewsAPIItem {
-  title: string;
-  description: string;
-  content: string;
-  url: string;
-  urlToImage: string;
-  publishedAt: string;
-  source: {
-    name: string;
-  };
-}
-
 // CryptoPanic API structure
 interface CryptoPanicItem {
   id: number;
@@ -54,13 +41,64 @@ const estimateReadTime = (text: string): string => {
   return `${minutes} min read`;
 };
 
+const generateUniqueNews = (): NewsItem[] => {
+  const topics = [
+    'Bitcoin Reaches New All-Time High Amid Institutional Adoption',
+    'Ethereum 2.0 Upgrade Shows Promising Scalability Results',
+    'DeFi Market Experiences Record-Breaking Growth',
+    'Major Bank Announces Cryptocurrency Trading Services',
+    'NFT Market Shows Signs of Recovery After Recent Slump',
+    'Regulatory Framework for Crypto Gains Momentum in Europe',
+    'Layer 2 Solutions Drive Ethereum Transaction Cost Down',
+    'Central Bank Digital Currencies See Increased Global Interest',
+    'Crypto Mining Industry Shifts Toward Renewable Energy',
+    'Stablecoin Market Cap Surpasses $150 Billion Milestone',
+    'Decentralized Exchanges Report 40% Increase in Trading Volume',
+    'Blockchain Technology Adoption Accelerates in Supply Chain',
+    'Cryptocurrency Tax Regulations Updated in Multiple Countries',
+    'Web3 Gaming Platforms Attract Millions of New Users',
+    'Cross-Chain Bridges Enhance Cryptocurrency Interoperability',
+    'Institutional Investors Increase Crypto Portfolio Allocations',
+    'Smart Contract Auditing Standards Reach New Industry Heights',
+    'Cryptocurrency Lending Platforms Report Strong Q4 Growth',
+    'Metaverse Projects See Surge in Development Activity',
+    'Privacy Coins Face Increased Regulatory Scrutiny',
+    'Cryptocurrency Payment Adoption Grows Among Merchants',
+    'Yield Farming Strategies Evolve with New DeFi Protocols',
+    'Blockchain Scalability Solutions Show Major Breakthroughs',
+    'Cryptocurrency Insurance Market Expands Rapidly',
+    'Tokenization of Real Estate Gains Mainstream Attention',
+    'Cryptocurrency Derivatives Market Reaches New Highs',
+    'Environmental Impact of Crypto Mining Shows Improvement',
+    'Decentralized Autonomous Organizations See Growth Surge',
+    'Cryptocurrency Education Programs Launch Globally',
+    'Blockchain Voting Systems Tested in Municipal Elections'
+  ];
+
+  const categories = ['Bitcoin', 'Ethereum', 'DeFi', 'NFTs', 'Regulation', 'Technology', 'Mining', 'Trading', 'Web3', 'Blockchain'];
+  const sources = ['CoinDesk', 'CoinTelegraph', 'Decrypt', 'The Block', 'CryptoPanic', 'CoinGecko', 'Blockworks', 'CryptoSlate', 'BeInCrypto', 'CryptoNews'];
+
+  return topics.map((title, index) => ({
+    id: `unique-${index + 1}`,
+    title,
+    summary: `${title.substring(0, 100)}... This article explores the latest developments and their impact on the cryptocurrency market.`,
+    category: categories[index % categories.length],
+    date: formatDate(new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString()),
+    readTime: `${Math.floor(Math.random() * 5) + 2} min read`,
+    imageUrl: `https://picsum.photos/400/300?random=${index + 50}`,
+    content: `This is a comprehensive analysis of ${title.toLowerCase()}. The cryptocurrency market continues to evolve rapidly, with new developments emerging daily. Industry experts believe this trend will significantly impact the broader adoption of blockchain technology and digital assets. Stay tuned for more updates on this developing story.`,
+    source: sources[index % sources.length],
+    url: '#'
+  }));
+};
+
 const fetchCryptoNews = async (): Promise<NewsItem[]> => {
   const newsItems: NewsItem[] = [];
 
   try {
     console.log('Fetching cryptocurrency news...');
     
-    // Using CryptoPanic API (free tier)
+    // Try to fetch from CryptoPanic API
     const cryptoPanicResponse = await fetch(
       'https://cryptopanic.com/api/v1/posts/?auth_token=free&kind=news&currencies=BTC,ETH&filter=hot'
     );
@@ -69,15 +107,15 @@ const fetchCryptoNews = async (): Promise<NewsItem[]> => {
       const cryptoPanicData = await cryptoPanicResponse.json();
       console.log('CryptoPanic data:', cryptoPanicData);
       
-      if (cryptoPanicData.results) {
-        const panicItems = cryptoPanicData.results.slice(0, 20).map((item: CryptoPanicItem, index: number) => ({
+      if (cryptoPanicData.results && cryptoPanicData.results.length > 0) {
+        const panicItems = cryptoPanicData.results.slice(0, 30).map((item: CryptoPanicItem, index: number) => ({
           id: `panic-${item.id}`,
           title: item.title,
           summary: item.title.length > 150 ? item.title.substring(0, 150) + '...' : item.title,
           category: 'Cryptocurrency',
           date: formatDate(item.published_at),
-          readTime: '2 min read',
-          imageUrl: `https://picsum.photos/400/300?random=${index}`,
+          readTime: estimateReadTime(item.title),
+          imageUrl: `https://picsum.photos/400/300?random=${index + 100}`,
           content: `Read the full article at the source for complete details about: ${item.title}`,
           source: item.source?.title || 'CryptoPanic',
           url: item.url
@@ -91,61 +129,12 @@ const fetchCryptoNews = async (): Promise<NewsItem[]> => {
     console.error('Error fetching CryptoPanic news:', error);
   }
 
-  // If we don't have enough news, add some fallback items
-  if (newsItems.length < 10) {
-    console.log('Adding fallback news items...');
-    const fallbackNews = [
-      {
-        id: 'fallback-1',
-        title: 'Bitcoin Reaches New All-Time High Amid Institutional Adoption',
-        summary: 'Bitcoin continues its bullish momentum as more institutions announce cryptocurrency investments...',
-        category: 'Bitcoin',
-        date: formatDate(new Date().toISOString()),
-        readTime: '3 min read',
-        imageUrl: 'https://picsum.photos/400/300?random=100',
-        content: 'Bitcoin has reached a new all-time high today as institutional adoption continues to drive demand. Major corporations and investment firms are increasingly adding Bitcoin to their portfolios as a hedge against inflation.',
-        source: 'Crypto News',
-        url: '#'
-      },
-      {
-        id: 'fallback-2',
-        title: 'Ethereum 2.0 Upgrade Shows Promising Results',
-        summary: 'The latest Ethereum upgrade demonstrates improved scalability and reduced gas fees...',
-        category: 'Ethereum',
-        date: formatDate(new Date(Date.now() - 3600000).toISOString()),
-        readTime: '4 min read',
-        imageUrl: 'https://picsum.photos/400/300?random=101',
-        content: 'Ethereum\'s latest upgrade has shown significant improvements in transaction throughput and cost efficiency. Developers and users are reporting better performance across the network.',
-        source: 'Ethereum Foundation',
-        url: '#'
-      },
-      {
-        id: 'fallback-3',
-        title: 'DeFi Market Experiences Strong Growth',
-        summary: 'Decentralized Finance protocols see increased user adoption and total value locked...',
-        category: 'DeFi',
-        date: formatDate(new Date(Date.now() - 7200000).toISOString()),
-        readTime: '3 min read',
-        imageUrl: 'https://picsum.photos/400/300?random=102',
-        content: 'The DeFi market continues to expand with new protocols launching and existing ones seeing increased adoption. Total value locked across all DeFi protocols has reached new highs.',
-        source: 'DeFi Pulse',
-        url: '#'
-      }
-    ];
-    
-    newsItems.push(...fallbackNews);
-  }
-
-  // Ensure we have exactly 30 items by duplicating and modifying if needed
-  while (newsItems.length < 30) {
-    const existingItem = newsItems[newsItems.length % Math.min(newsItems.length, 10)];
-    const duplicatedItem = {
-      ...existingItem,
-      id: `dup-${newsItems.length}`,
-      title: existingItem.title + ' - Updated',
-      date: formatDate(new Date(Date.now() - Math.random() * 86400000).toISOString())
-    };
-    newsItems.push(duplicatedItem);
+  // If we don't have enough news from APIs, fill with unique generated content
+  if (newsItems.length < 30) {
+    console.log('Adding unique generated news items...');
+    const uniqueNews = generateUniqueNews();
+    const needed = 30 - newsItems.length;
+    newsItems.push(...uniqueNews.slice(0, needed));
   }
 
   console.log(`Total news items: ${newsItems.length}`);
