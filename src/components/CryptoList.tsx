@@ -1,7 +1,7 @@
-
 import { ArrowUpIcon, ArrowDownIcon, AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchWithCache, CryptoData } from "@/utils/apiUtils";
+import CryptoImage from "@/components/CryptoImage";
 
 interface CryptoListProps {
   onCurrencySelect: (symbol: string, name: string) => void;
@@ -92,7 +92,11 @@ const CryptoList = ({ onCurrencySelect }: CryptoListProps) => {
                 <td className="py-4 text-muted-foreground">#{index + 1}</td>
                 <td className="py-4">
                   <div className="flex items-center gap-2">
-                    <img src={crypto.image} alt={crypto.name} className="w-8 h-8 rounded-full" />
+                    <CryptoImage 
+                      src={crypto.image} 
+                      alt={crypto.name}
+                      fallbackText={crypto.symbol.charAt(0).toUpperCase()}
+                    />
                     <div>
                       <p className="font-medium">{crypto.name}</p>
                       <p className="text-sm text-muted-foreground">{crypto.symbol.toUpperCase()}</p>

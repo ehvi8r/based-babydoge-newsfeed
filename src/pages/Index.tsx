@@ -7,6 +7,7 @@ import CryptoList from "@/components/CryptoList";
 import BaseCurrencies from "@/components/BaseCurrencies";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import CryptoImage from "@/components/CryptoImage";
 
 const Index = () => {
   const [selectedCurrency, setSelectedCurrency] = useState({
@@ -24,10 +25,11 @@ const Index = () => {
       <div className="max-w-7xl mx-auto">
         <header className="mb-8">
           <div className="flex items-center gap-3 mb-2">
-            <img 
-              src="https://babydoge20.com/assets/images/BABYlogo.png" 
-              alt="Based BabyDoge Logo" 
+            <CryptoImage 
+              src="https://babydoge20.com/assets/images/BABYlogo.png"
+              alt="Based BabyDoge Logo"
               className="w-8 h-8 sm:w-10 sm:h-10"
+              fallbackText="BD"
             />
             <h1 className="text-2xl sm:text-3xl font-bold">Based BabyDoge Dashboard</h1>
           </div>

@@ -2,6 +2,7 @@
 import { ArrowUpIcon, ArrowDownIcon, AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchWithCache } from "@/utils/apiUtils";
+import CryptoImage from "@/components/CryptoImage";
 
 interface BaseCurrenciesProps {
   onCurrencySelect: (symbol: string, name: string) => void;
@@ -18,8 +19,7 @@ interface BaseCurrency {
 }
 
 const fetchBaseCurrencies = async (): Promise<BaseCurrency[]> => {
-  // Using static fallback data for now since Base-specific API endpoint needs verification
-  // This follows our phased approach - start with static data, then integrate real API
+  // Updated with more reliable image URLs and better fallback data
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve([
@@ -27,7 +27,7 @@ const fetchBaseCurrencies = async (): Promise<BaseCurrency[]> => {
           id: "coinbase-wrapped-staked-eth",
           name: "Coinbase Wrapped Staked ETH",
           symbol: "cbETH",
-          image: "https://assets.coingecko.com/coins/images/27008/small/cbeth.png",
+          image: "https://coin-images.coingecko.com/coins/images/27008/large/cbeth.png",
           current_price: 3420.50,
           market_cap: 4200000000,
           price_change_percentage_24h: 2.4
@@ -36,7 +36,7 @@ const fetchBaseCurrencies = async (): Promise<BaseCurrency[]> => {
           id: "usd-coin",
           name: "USD Coin",
           symbol: "USDC",
-          image: "https://assets.coingecko.com/coins/images/6319/small/USD_Coin_icon.png",
+          image: "https://coin-images.coingecko.com/coins/images/6319/large/USD_Coin_icon.png",
           current_price: 1.00,
           market_cap: 3800000000,
           price_change_percentage_24h: 0.02
@@ -45,7 +45,7 @@ const fetchBaseCurrencies = async (): Promise<BaseCurrency[]> => {
           id: "aerodrome-finance",
           name: "Aerodrome Finance",
           symbol: "AERO",
-          image: "https://assets.coingecko.com/coins/images/31745/small/token.png",
+          image: "https://coin-images.coingecko.com/coins/images/31745/large/token.png",
           current_price: 1.85,
           market_cap: 890000000,
           price_change_percentage_24h: 5.7
@@ -54,7 +54,7 @@ const fetchBaseCurrencies = async (): Promise<BaseCurrency[]> => {
           id: "base-god",
           name: "Based God",
           symbol: "TYBG",
-          image: "https://assets.coingecko.com/coins/images/31234/small/based-god.png",
+          image: "https://coin-images.coingecko.com/coins/images/31234/large/based-god.png",
           current_price: 0.245,
           market_cap: 245000000,
           price_change_percentage_24h: -1.2
@@ -63,7 +63,7 @@ const fetchBaseCurrencies = async (): Promise<BaseCurrency[]> => {
           id: "higher",
           name: "Higher",
           symbol: "HIGHER",
-          image: "https://assets.coingecko.com/coins/images/35687/small/higher.jpg",
+          image: "https://coin-images.coingecko.com/coins/images/35687/large/higher.jpg",
           current_price: 0.0892,
           market_cap: 89200000,
           price_change_percentage_24h: 12.3
@@ -72,7 +72,7 @@ const fetchBaseCurrencies = async (): Promise<BaseCurrency[]> => {
           id: "degen-base",
           name: "Degen",
           symbol: "DEGEN",
-          image: "https://assets.coingecko.com/coins/images/34515/small/degen.jpg",
+          image: "https://coin-images.coingecko.com/coins/images/34515/large/degen.jpg",
           current_price: 0.0234,
           market_cap: 78900000,
           price_change_percentage_24h: -3.4
@@ -81,7 +81,7 @@ const fetchBaseCurrencies = async (): Promise<BaseCurrency[]> => {
           id: "seamless-protocol",
           name: "Seamless Protocol",
           symbol: "SEAM",
-          image: "https://assets.coingecko.com/coins/images/35234/small/seamless.png",
+          image: "https://coin-images.coingecko.com/coins/images/35234/large/seamless.png",
           current_price: 2.67,
           market_cap: 67000000,
           price_change_percentage_24h: 8.9
@@ -90,7 +90,7 @@ const fetchBaseCurrencies = async (): Promise<BaseCurrency[]> => {
           id: "based-pepe",
           name: "Based Pepe",
           symbol: "PEPE",
-          image: "https://assets.coingecko.com/coins/images/35123/small/based-pepe.png",
+          image: "https://coin-images.coingecko.com/coins/images/35123/large/based-pepe.png",
           current_price: 0.000034,
           market_cap: 34000000,
           price_change_percentage_24h: -7.1
@@ -99,7 +99,7 @@ const fetchBaseCurrencies = async (): Promise<BaseCurrency[]> => {
           id: "moonwell",
           name: "Moonwell",
           symbol: "WELL",
-          image: "https://assets.coingecko.com/coins/images/25392/small/moonwell.png",
+          image: "https://coin-images.coingecko.com/coins/images/25392/large/moonwell.png",
           current_price: 0.078,
           market_cap: 28500000,
           price_change_percentage_24h: 4.2
@@ -108,13 +108,13 @@ const fetchBaseCurrencies = async (): Promise<BaseCurrency[]> => {
           id: "prime-base",
           name: "Prime",
           symbol: "PRIME",
-          image: "https://assets.coingecko.com/coins/images/34567/small/prime-base.png",
+          image: "https://coin-images.coingecko.com/coins/images/34567/large/prime-base.png",
           current_price: 15.67,
           market_cap: 25600000,
           price_change_percentage_24h: -2.8
         }
       ]);
-    }, 500); // Simulate API delay
+    }, 500);
   });
 };
 
@@ -188,10 +188,11 @@ const BaseCurrencies = ({ onCurrencySelect }: BaseCurrenciesProps) => {
   return (
     <div className="glass-card rounded-lg p-6 animate-fade-in">
       <div className="flex items-center gap-2 mb-6">
-        <img 
-          src="https://cryptologos.cc/logos/base-base-logo.png" 
-          alt="Base Chain" 
+        <CryptoImage 
+          src="https://cryptologos.cc/logos/base-base-logo.png"
+          alt="Base Chain"
           className="w-6 h-6"
+          fallbackText="B"
         />
         <h2 className="text-xl font-semibold">Top Base Currencies</h2>
       </div>
@@ -216,7 +217,11 @@ const BaseCurrencies = ({ onCurrencySelect }: BaseCurrenciesProps) => {
                 <td className="py-4 text-muted-foreground">#{index + 1}</td>
                 <td className="py-4">
                   <div className="flex items-center gap-2">
-                    <img src={currency.image} alt={currency.name} className="w-8 h-8 rounded-full" />
+                    <CryptoImage 
+                      src={currency.image} 
+                      alt={currency.name}
+                      fallbackText={currency.symbol.charAt(0).toUpperCase()}
+                    />
                     <div>
                       <p className="font-medium">{currency.name}</p>
                       <p className="text-sm text-muted-foreground">{currency.symbol.toUpperCase()}</p>
