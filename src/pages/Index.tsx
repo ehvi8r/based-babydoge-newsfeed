@@ -1,3 +1,5 @@
+
+import { useState } from "react";
 import MarketStats from "@/components/MarketStats";
 import CryptoChart from "@/components/CryptoChart";
 import PortfolioCard from "@/components/PortfolioCard";
@@ -7,6 +9,16 @@ import AnnouncementBanner from "@/components/AnnouncementBanner";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
 const Index = () => {
+  const [selectedCurrency, setSelectedCurrency] = useState({
+    symbol: "BINANCE:BTCUSDT",
+    name: "Bitcoin"
+  });
+
+  const handleCurrencySelect = (symbol: string, name: string) => {
+    console.log(`Selected currency: ${name} (${symbol})`);
+    setSelectedCurrency({ symbol, name });
+  };
+
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
@@ -35,7 +47,7 @@ const Index = () => {
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8 mb-8">
           <div className="xl:col-span-2">
             <ErrorBoundary>
-              <CryptoChart />
+              <CryptoChart symbol={selectedCurrency.symbol} name={selectedCurrency.name} />
             </ErrorBoundary>
           </div>
           <div>
@@ -47,10 +59,10 @@ const Index = () => {
         
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8 mb-8">
           <ErrorBoundary>
-            <CryptoList />
+            <CryptoList onCurrencySelect={handleCurrencySelect} />
           </ErrorBoundary>
           <ErrorBoundary>
-            <BaseCurrencies />
+            <BaseCurrencies onCurrencySelect={handleCurrencySelect} />
           </ErrorBoundary>
         </div>
       </div>

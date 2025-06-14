@@ -1,15 +1,20 @@
 
 import TradingViewWidget from 'react-tradingview-widget';
 
-const CryptoChart = () => {
+interface CryptoChartProps {
+  symbol?: string;
+  name?: string;
+}
+
+const CryptoChart = ({ symbol = "BINANCE:BTCUSDT", name = "Bitcoin" }: CryptoChartProps) => {
   return (
     <div className="glass-card p-6 rounded-lg mb-8 animate-fade-in">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold">Bitcoin Price</h2>
+        <h2 className="text-xl font-semibold">{name} Price</h2>
       </div>
       <div className="h-[400px] w-full">
         <TradingViewWidget
-          symbol="BINANCE:BTCUSDT"
+          symbol={symbol}
           theme="Dark"
           locale="en"
           autosize

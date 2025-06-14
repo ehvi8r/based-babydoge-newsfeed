@@ -3,6 +3,10 @@ import { ArrowUpIcon, ArrowDownIcon, AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchWithCache, CryptoData } from "@/utils/apiUtils";
 
+interface CryptoListProps {
+  onCurrencySelect: (symbol: string, name: string) => void;
+}
+
 const fetchCryptoData = async (): Promise<CryptoData[]> => {
   return fetchWithCache<CryptoData[]>(
     'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false',
@@ -11,7 +15,7 @@ const fetchCryptoData = async (): Promise<CryptoData[]> => {
   );
 };
 
-const CryptoList = () => {
+const CryptoList = ({ onCurrencySelect }: CryptoListProps) => {
   const { data: cryptos, isLoading, isError } = useQuery({
     queryKey: ['cryptos'],
     queryFn: fetchCryptoData,
@@ -19,6 +23,11 @@ const CryptoList = () => {
     retry: false, // Let our utility handle retries
     staleTime: 5 * 60 * 1000, // Consider data stale after 5 minutes
   });
+
+  const handleRowClick = (crypto: CryptoData) => {
+    const tradingViewSymbol = `BINANCE:${crypto.symbol.toUpperCase()}USDT`;
+    onCurrencySelect(tradingViewSymbol, crypto.name);
+  };
 
   if (isLoading) {
     return (
@@ -75,7 +84,11 @@ const CryptoList = () => {
           </thead>
           <tbody>
             {cryptos?.map((crypto, index) => (
-              <tr key={crypto.id} className="border-t border-secondary">
+              <tr 
+                key={crypto.id} 
+                className="border-t border-secondary hover:bg-secondary/20 cursor-pointer transition-colors"
+                onClick={() => handleRowClick(crypto)}
+              >
                 <td className="py-4 text-muted-foreground">#{index + 1}</td>
                 <td className="py-4">
                   <div className="flex items-center gap-2">

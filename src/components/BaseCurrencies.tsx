@@ -3,6 +3,10 @@ import { ArrowUpIcon, ArrowDownIcon, AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchWithCache } from "@/utils/apiUtils";
 
+interface BaseCurrenciesProps {
+  onCurrencySelect: (symbol: string, name: string) => void;
+}
+
 interface BaseCurrency {
   id: string;
   name: string;
@@ -114,7 +118,7 @@ const fetchBaseCurrencies = async (): Promise<BaseCurrency[]> => {
   });
 };
 
-const BaseCurrencies = () => {
+const BaseCurrencies = ({ onCurrencySelect }: BaseCurrenciesProps) => {
   const { data: baseCurrencies, isLoading, isError } = useQuery({
     queryKey: ['baseCurrencies'],
     queryFn: fetchBaseCurrencies,
@@ -122,6 +126,11 @@ const BaseCurrencies = () => {
     retry: false,
     staleTime: 5 * 60 * 1000,
   });
+
+  const handleRowClick = (currency: BaseCurrency) => {
+    const tradingViewSymbol = `BINANCE:${currency.symbol.toUpperCase()}USDT`;
+    onCurrencySelect(tradingViewSymbol, currency.name);
+  };
 
   if (isLoading) {
     return (
@@ -132,7 +141,7 @@ const BaseCurrencies = () => {
             alt="Base Chain" 
             className="w-6 h-6"
           />
-          <h2 className="text-xl font-semibold">Top Base Chain Tokens</h2>
+          <h2 className="text-xl font-semibold">Top Base Currencies</h2>
         </div>
         <div className="animate-pulse">
           {[...Array(5)].map((_, i) => (
@@ -161,7 +170,7 @@ const BaseCurrencies = () => {
             alt="Base Chain" 
             className="w-6 h-6"
           />
-          <h2 className="text-xl font-semibold">Top Base Chain Tokens</h2>
+          <h2 className="text-xl font-semibold">Top Base Currencies</h2>
         </div>
         <div className="flex items-center justify-center py-8">
           <div className="flex items-center gap-3 text-warning">
@@ -184,7 +193,7 @@ const BaseCurrencies = () => {
           alt="Base Chain" 
           className="w-6 h-6"
         />
-        <h2 className="text-xl font-semibold">Top Base Chain Tokens</h2>
+        <h2 className="text-xl font-semibold">Top Base Currencies</h2>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full">
@@ -199,7 +208,11 @@ const BaseCurrencies = () => {
           </thead>
           <tbody>
             {baseCurrencies?.map((currency, index) => (
-              <tr key={currency.id} className="border-t border-secondary">
+              <tr 
+                key={currency.id} 
+                className="border-t border-secondary hover:bg-secondary/20 cursor-pointer transition-colors"
+                onClick={() => handleRowClick(currency)}
+              >
                 <td className="py-4 text-muted-foreground">#{index + 1}</td>
                 <td className="py-4">
                   <div className="flex items-center gap-2">
