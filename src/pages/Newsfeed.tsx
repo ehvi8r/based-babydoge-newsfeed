@@ -2,16 +2,20 @@
 import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { RefreshCcw } from "lucide-react";
 import NewsCard from "@/components/NewsCard";
 import NewsModal from "@/components/NewsModal";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { useNewsData, NewsItem } from "@/hooks/useNewsData";
+import { useToast } from "@/hooks/use-toast";
 
 const Newsfeed = () => {
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { toast } = useToast();
   
-  const { data: newsData, isLoading, error, refetch } = useNewsData();
+  const { data: newsData, isLoading, error, refetch, isFetching } = useNewsData();
 
   const handleNewsClick = (news: NewsItem) => {
     setSelectedNews(news);
@@ -23,8 +27,20 @@ const Newsfeed = () => {
     setSelectedNews(null);
   };
 
-  const handleRefresh = () => {
-    refetch();
+  const handleRefresh = async () => {
+    try {
+      await refetch();
+      toast({
+        title: "News Refreshed",
+        description: "Latest cryptocurrency news has been loaded.",
+      });
+    } catch (error) {
+      toast({
+        title: "Refresh Failed",
+        description: "Failed to refresh news. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   if (error) {
@@ -38,12 +54,9 @@ const Newsfeed = () => {
             <p className="text-muted-foreground mb-4">
               There was an error loading the latest cryptocurrency news.
             </p>
-            <button 
-              onClick={handleRefresh}
-              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
-            >
+            <Button onClick={handleRefresh}>
               Try Again
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -61,19 +74,23 @@ const Newsfeed = () => {
                 Stay updated with the latest cryptocurrency news and Based BabyDoge updates
               </p>
             </div>
-            <button 
+            <Button 
               onClick={handleRefresh}
-              disabled={isLoading}
-              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50"
+              disabled={isLoading || isFetching}
+              variant="outline"
+              size="sm"
             >
-              {isLoading ? 'Refreshing...' : 'Refresh'}
-            </button>
+              <RefreshCcw className={`w-4 h-4 mr-2 ${isFetching ? 'animate-spin' : ''}`} />
+              {isFetching ? 'Refreshing...' : 'Refresh'}
+            </Button>
           </div>
         </header>
         
         <ErrorBoundary>
           <div className="glass-card rounded-lg p-6 animate-fade-in">
-            <h3 className="text-xl font-semibold mb-6">Latest Cryptocurrency News</h3>
+            <h3 className="text-xl font-semibold mb-6">
+              Latest Cryptocurrency News ({newsData?.length || 0} articles)
+            </h3>
             <ScrollArea className="h-[calc(100vh-300px)]">
               <div className="space-y-4 pr-4">
                 {isLoading ? (
@@ -94,14 +111,22 @@ const Newsfeed = () => {
                       </div>
                     </div>
                   ))
-                ) : (
-                  newsData?.map((news) => (
+                ) : newsData && newsData.length > 0 ? (
+                  newsData.map((news) => (
                     <NewsCard 
                       key={news.id} 
                       news={news} 
                       onClick={handleNewsClick}
                     />
                   ))
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">No news articles available at the moment.</p>
+                    <Button onClick={handleRefresh} className="mt-4" variant="outline">
+                      <RefreshCcw className="w-4 h-4 mr-2" />
+                      Try Loading News
+                    </Button>
+                  </div>
                 )}
               </div>
             </ScrollArea>
