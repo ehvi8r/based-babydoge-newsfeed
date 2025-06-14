@@ -19,121 +19,29 @@ interface BaseCurrency {
 }
 
 const fetchBaseCurrencies = async (): Promise<BaseCurrency[]> => {
-  // Updated with more reliable image URLs and better fallback data
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve([
-        {
-          id: "coinbase-wrapped-staked-eth",
-          name: "Coinbase Wrapped Staked ETH",
-          symbol: "cbETH",
-          image: "https://coin-images.coingecko.com/coins/images/27008/large/cbeth.png",
-          current_price: 3420.50,
-          market_cap: 4200000000,
-          price_change_percentage_24h: 2.4
-        },
-        {
-          id: "usd-coin",
-          name: "USD Coin",
-          symbol: "USDC",
-          image: "https://coin-images.coingecko.com/coins/images/6319/large/USD_Coin_icon.png",
-          current_price: 1.00,
-          market_cap: 3800000000,
-          price_change_percentage_24h: 0.02
-        },
-        {
-          id: "aerodrome-finance",
-          name: "Aerodrome Finance",
-          symbol: "AERO",
-          image: "https://coin-images.coingecko.com/coins/images/31745/large/token.png",
-          current_price: 1.85,
-          market_cap: 890000000,
-          price_change_percentage_24h: 5.7
-        },
-        {
-          id: "base-god",
-          name: "Based God",
-          symbol: "TYBG",
-          image: "https://coin-images.coingecko.com/coins/images/31234/large/based-god.png",
-          current_price: 0.245,
-          market_cap: 245000000,
-          price_change_percentage_24h: -1.2
-        },
-        {
-          id: "higher",
-          name: "Higher",
-          symbol: "HIGHER",
-          image: "https://coin-images.coingecko.com/coins/images/35687/large/higher.jpg",
-          current_price: 0.0892,
-          market_cap: 89200000,
-          price_change_percentage_24h: 12.3
-        },
-        {
-          id: "degen-base",
-          name: "Degen",
-          symbol: "DEGEN",
-          image: "https://coin-images.coingecko.com/coins/images/34515/large/degen.jpg",
-          current_price: 0.0234,
-          market_cap: 78900000,
-          price_change_percentage_24h: -3.4
-        },
-        {
-          id: "seamless-protocol",
-          name: "Seamless Protocol",
-          symbol: "SEAM",
-          image: "https://coin-images.coingecko.com/coins/images/35234/large/seamless.png",
-          current_price: 2.67,
-          market_cap: 67000000,
-          price_change_percentage_24h: 8.9
-        },
-        {
-          id: "based-pepe",
-          name: "Based Pepe",
-          symbol: "PEPE",
-          image: "https://coin-images.coingecko.com/coins/images/35123/large/based-pepe.png",
-          current_price: 0.000034,
-          market_cap: 34000000,
-          price_change_percentage_24h: -7.1
-        },
-        {
-          id: "moonwell",
-          name: "Moonwell",
-          symbol: "WELL",
-          image: "https://coin-images.coingecko.com/coins/images/25392/large/moonwell.png",
-          current_price: 0.078,
-          market_cap: 28500000,
-          price_change_percentage_24h: 4.2
-        },
-        {
-          id: "prime-base",
-          name: "Prime",
-          symbol: "PRIME",
-          image: "https://coin-images.coingecko.com/coins/images/34567/large/prime-base.png",
-          current_price: 15.67,
-          market_cap: 25600000,
-          price_change_percentage_24h: -2.8
-        },
-        {
-          id: "toshi",
-          name: "Toshi",
-          symbol: "TOSHI",
-          image: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9",
-          current_price: 0.0123,
-          market_cap: 23400000,
-          price_change_percentage_24h: 6.8
-        },
-        {
-          id: "toshiba",
-          name: "Toshiba",
-          symbol: "TOSHIBA",
-          image: "https://images.unsplash.com/photo-1535268647677-300dbf3d78d1",
-          current_price: 0.0089,
-          market_cap: 18900000,
-          price_change_percentage_24h: -4.5
-        }
-      ]);
-    }, 500);
-  });
+  // Fetch real data from CoinGecko API for Base ecosystem tokens
+  const baseTokenIds = [
+    'coinbase-wrapped-staked-eth',
+    'usd-coin',
+    'aerodrome-finance',
+    'based-pepe',
+    'higher',
+    'degen-base',
+    'seamless-protocol',
+    'moonwell',
+    'prime',
+    'toshi-base',
+    'based-shiba-inu',
+    'basenji'
+  ];
+  
+  const idsParam = baseTokenIds.join(',');
+  
+  return fetchWithCache<BaseCurrency[]>(
+    `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${idsParam}&order=market_cap_desc&per_page=12&page=1&sparkline=false`,
+    'base-currencies',
+    10 // 10 minute cache
+  );
 };
 
 const BaseCurrencies = ({ onCurrencySelect }: BaseCurrenciesProps) => {
