@@ -1,3 +1,4 @@
+
 import TradingViewWidget from 'react-tradingview-widget';
 
 const CryptoChart = () => {
@@ -9,7 +10,7 @@ const CryptoChart = () => {
       <div className="h-[400px] w-full">
         <TradingViewWidget
           symbol="BINANCE:BTCUSDT"
-          theme="dark"
+          theme="Dark"
           locale="en"
           autosize
           hide_side_toolbar={false}

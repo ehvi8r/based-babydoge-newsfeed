@@ -1,7 +1,9 @@
+
 import MarketStats from "@/components/MarketStats";
 import CryptoChart from "@/components/CryptoChart";
 import PortfolioCard from "@/components/PortfolioCard";
 import CryptoList from "@/components/CryptoList";
+import AnnouncementBanner from "@/components/AnnouncementBanner";
 
 const Index = () => {
   return (
@@ -11,6 +13,8 @@ const Index = () => {
           <h1 className="text-3xl font-bold mb-2">Based BabyDoge Dashboard</h1>
           <p className="text-muted-foreground">Welcome back to your portfolio (More on the way)</p>
         </header>
+        
+        <AnnouncementBanner />
         
         <MarketStats />
         
