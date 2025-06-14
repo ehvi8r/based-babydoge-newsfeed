@@ -1,8 +1,8 @@
-
 import MarketStats from "@/components/MarketStats";
 import CryptoChart from "@/components/CryptoChart";
 import PortfolioCard from "@/components/PortfolioCard";
 import CryptoList from "@/components/CryptoList";
+import BaseCurrencies from "@/components/BaseCurrencies";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
@@ -45,9 +45,14 @@ const Index = () => {
           </div>
         </div>
         
-        <ErrorBoundary>
-          <CryptoList />
-        </ErrorBoundary>
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8 mb-8">
+          <ErrorBoundary>
+            <CryptoList />
+          </ErrorBoundary>
+          <ErrorBoundary>
+            <BaseCurrencies />
+          </ErrorBoundary>
+        </div>
       </div>
     </div>
   );
