@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { ExternalLink } from "lucide-react";
 
 interface NewsItem {
   id: string;
@@ -17,6 +18,8 @@ interface NewsItem {
   readTime: string;
   imageUrl?: string;
   content: string;
+  source: string;
+  url: string;
 }
 
 interface NewsModalProps {
@@ -28,6 +31,10 @@ interface NewsModalProps {
 const NewsModal = ({ news, isOpen, onClose }: NewsModalProps) => {
   if (!news) return null;
 
+  const handleReadFull = () => {
+    window.open(news.url, '_blank', 'noopener,noreferrer');
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] p-0">
@@ -37,6 +44,9 @@ const NewsModal = ({ news, isOpen, onClose }: NewsModalProps) => {
               <div className="flex items-center gap-2 mb-3">
                 <Badge variant="secondary">
                   {news.category}
+                </Badge>
+                <Badge variant="outline">
+                  {news.source}
                 </Badge>
                 <span className="text-sm text-muted-foreground">
                   {news.date} • {news.readTime}
@@ -53,6 +63,9 @@ const NewsModal = ({ news, isOpen, onClose }: NewsModalProps) => {
                   src={news.imageUrl} 
                   alt={news.title}
                   className="w-full h-64 object-cover rounded-lg"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
                 />
               </div>
             )}
@@ -61,8 +74,21 @@ const NewsModal = ({ news, isOpen, onClose }: NewsModalProps) => {
               <p className="text-lg text-muted-foreground mb-4 font-medium">
                 {news.summary}
               </p>
-              <div className="text-foreground whitespace-pre-line">
+              <div className="text-foreground whitespace-pre-line mb-6">
                 {news.content}
+              </div>
+              
+              <div className="border-t pt-4">
+                <button
+                  onClick={handleReadFull}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                >
+                  Read Full Article
+                  <ExternalLink className="w-4 h-4" />
+                </button>
+                <p className="text-xs text-muted-foreground mt-2">
+                  Source: {news.source}
+                </p>
               </div>
             </div>
           </div>

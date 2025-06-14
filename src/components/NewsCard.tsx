@@ -1,6 +1,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ExternalLink } from "lucide-react";
 
 interface NewsItem {
   id: string;
@@ -10,6 +11,8 @@ interface NewsItem {
   date: string;
   readTime: string;
   imageUrl?: string;
+  source: string;
+  url: string;
 }
 
 interface NewsCardProps {
@@ -31,6 +34,9 @@ const NewsCard = ({ news, onClick }: NewsCardProps) => {
                 src={news.imageUrl} 
                 alt={news.title}
                 className="w-full h-full object-cover rounded-lg"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
               />
             </div>
           )}
@@ -39,9 +45,13 @@ const NewsCard = ({ news, onClick }: NewsCardProps) => {
               <Badge variant="secondary" className="text-xs">
                 {news.category}
               </Badge>
+              <Badge variant="outline" className="text-xs">
+                {news.source}
+              </Badge>
               <span className="text-xs text-muted-foreground">
                 {news.date} • {news.readTime}
               </span>
+              <ExternalLink className="w-3 h-3 text-muted-foreground ml-auto" />
             </div>
             <h3 className="font-semibold text-lg mb-2 line-clamp-2 leading-tight">
               {news.title}
