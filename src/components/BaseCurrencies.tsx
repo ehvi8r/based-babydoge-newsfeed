@@ -1,4 +1,3 @@
-
 import { ArrowUpIcon, ArrowDownIcon, AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchWithCache } from "@/utils/apiUtils";
@@ -18,8 +17,51 @@ interface BaseCurrency {
   price_change_percentage_24h: number;
 }
 
+interface ContractTokenData {
+  id: string;
+  symbol: string;
+  name: string;
+  image: {
+    thumb: string;
+    small: string;
+    large: string;
+  };
+  market_data: {
+    current_price: {
+      usd: number;
+    };
+    market_cap: {
+      usd: number;
+    };
+    price_change_percentage_24h: number;
+  };
+}
+
+const fetchContractToken = async (contractAddress: string): Promise<BaseCurrency | null> => {
+  try {
+    const data = await fetchWithCache<ContractTokenData>(
+      `https://api.coingecko.com/api/v3/coins/base/contract/${contractAddress}`,
+      `contract-${contractAddress}`,
+      10
+    );
+
+    return {
+      id: data.id,
+      name: data.name,
+      symbol: data.symbol,
+      image: data.image.small,
+      current_price: data.market_data.current_price.usd,
+      market_cap: data.market_data.market_cap.usd,
+      price_change_percentage_24h: data.market_data.price_change_percentage_24h
+    };
+  } catch (error) {
+    console.error(`Failed to fetch contract token ${contractAddress}:`, error);
+    return null;
+  }
+};
+
 const fetchBaseCurrencies = async (): Promise<BaseCurrency[]> => {
-  // Fetch real data from CoinGecko API for Base ecosystem tokens
+  // Fetch standard tokens from CoinGecko
   const baseTokenIds = [
     'coinbase-wrapped-staked-eth',
     'usd-coin',
@@ -30,18 +72,27 @@ const fetchBaseCurrencies = async (): Promise<BaseCurrency[]> => {
     'seamless-protocol',
     'moonwell',
     'prime',
-    'toshi-base',
-    'based-shiba-inu',
-    'basenji'
+    'toshi-base'
   ];
   
   const idsParam = baseTokenIds.join(',');
   
-  return fetchWithCache<BaseCurrency[]>(
-    `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${idsParam}&order=market_cap_desc&per_page=12&page=1&sparkline=false`,
+  const standardTokens = await fetchWithCache<BaseCurrency[]>(
+    `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${idsParam}&order=market_cap_desc&per_page=10&page=1&sparkline=false`,
     'base-currencies',
-    10 // 10 minute cache
+    10
   );
+
+  // Fetch custom contract tokens
+  const customContracts = [
+    '0x459F65A7aaB8c08220ac636Ef633508E697e15d8' // Toshiba
+  ];
+
+  const contractTokenPromises = customContracts.map(address => fetchContractToken(address));
+  const contractTokens = (await Promise.all(contractTokenPromises)).filter(token => token !== null) as BaseCurrency[];
+
+  // Combine and return all tokens
+  return [...standardTokens, ...contractTokens];
 };
 
 const BaseCurrencies = ({ onCurrencySelect }: BaseCurrenciesProps) => {
