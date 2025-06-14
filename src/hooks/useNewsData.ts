@@ -42,51 +42,51 @@ const estimateReadTime = (text: string): string => {
 };
 
 const generateUniqueNews = (): NewsItem[] => {
-  const topics = [
+  const uniqueTopics = [
     'Bitcoin Reaches New All-Time High Amid Institutional Adoption',
     'Ethereum 2.0 Upgrade Shows Promising Scalability Results',
-    'DeFi Market Experiences Record-Breaking Growth',
-    'Major Bank Announces Cryptocurrency Trading Services',
-    'NFT Market Shows Signs of Recovery After Recent Slump',
-    'Regulatory Framework for Crypto Gains Momentum in Europe',
-    'Layer 2 Solutions Drive Ethereum Transaction Cost Down',
-    'Central Bank Digital Currencies See Increased Global Interest',
-    'Crypto Mining Industry Shifts Toward Renewable Energy',
-    'Stablecoin Market Cap Surpasses $150 Billion Milestone',
-    'Decentralized Exchanges Report 40% Increase in Trading Volume',
-    'Blockchain Technology Adoption Accelerates in Supply Chain',
-    'Cryptocurrency Tax Regulations Updated in Multiple Countries',
-    'Web3 Gaming Platforms Attract Millions of New Users',
-    'Cross-Chain Bridges Enhance Cryptocurrency Interoperability',
-    'Institutional Investors Increase Crypto Portfolio Allocations',
-    'Smart Contract Auditing Standards Reach New Industry Heights',
-    'Cryptocurrency Lending Platforms Report Strong Q4 Growth',
-    'Metaverse Projects See Surge in Development Activity',
-    'Privacy Coins Face Increased Regulatory Scrutiny',
-    'Cryptocurrency Payment Adoption Grows Among Merchants',
-    'Yield Farming Strategies Evolve with New DeFi Protocols',
-    'Blockchain Scalability Solutions Show Major Breakthroughs',
-    'Cryptocurrency Insurance Market Expands Rapidly',
-    'Tokenization of Real Estate Gains Mainstream Attention',
-    'Cryptocurrency Derivatives Market Reaches New Highs',
-    'Environmental Impact of Crypto Mining Shows Improvement',
-    'Decentralized Autonomous Organizations See Growth Surge',
-    'Cryptocurrency Education Programs Launch Globally',
-    'Blockchain Voting Systems Tested in Municipal Elections'
+    'DeFi Market Experiences Record-Breaking Growth This Quarter',
+    'Major Bank Announces Comprehensive Cryptocurrency Trading Services',
+    'NFT Market Shows Strong Recovery Signs After Recent Downturn',
+    'European Union Finalizes Progressive Cryptocurrency Regulatory Framework',
+    'Layer 2 Solutions Successfully Drive Down Ethereum Transaction Costs',
+    'Central Bank Digital Currencies Gain Momentum Across Global Markets',
+    'Crypto Mining Industry Accelerates Shift Toward Renewable Energy Sources',
+    'Stablecoin Market Cap Surpasses Historic $150 Billion Milestone',
+    'Decentralized Exchanges Report Impressive 40% Trading Volume Increase',
+    'Blockchain Technology Adoption Rapidly Accelerates in Supply Chain Management',
+    'Multiple Countries Implement Updated Cryptocurrency Tax Regulations',
+    'Web3 Gaming Platforms Successfully Attract Millions of Active Users',
+    'Cross-Chain Bridge Technology Significantly Enhances Cryptocurrency Interoperability',
+    'Institutional Investors Dramatically Increase Crypto Portfolio Allocations',
+    'Smart Contract Auditing Standards Reach New Industry-Leading Heights',
+    'Cryptocurrency Lending Platforms Report Exceptional Q4 Performance Growth',
+    'Metaverse Development Projects Experience Unprecedented Activity Surge',
+    'Privacy-Focused Cryptocurrencies Face Heightened Regulatory Scrutiny Worldwide',
+    'Merchant Cryptocurrency Payment Adoption Experiences Remarkable Growth',
+    'Advanced Yield Farming Strategies Evolve with Innovative DeFi Protocols',
+    'Revolutionary Blockchain Scalability Solutions Demonstrate Major Technical Breakthroughs',
+    'Cryptocurrency Insurance Market Undergoes Rapid Expansion Phase',
+    'Real Estate Tokenization Technology Captures Mainstream Market Attention',
+    'Cryptocurrency Derivatives Trading Market Achieves Record-Breaking Highs',
+    'Crypto Mining Environmental Impact Shows Significant Measurable Improvement',
+    'Decentralized Autonomous Organizations Experience Remarkable Growth Surge',
+    'Global Cryptocurrency Education Programs Launch Across Multiple Continents',
+    'Municipal Elections Successfully Test Advanced Blockchain Voting Systems'
   ];
 
   const categories = ['Bitcoin', 'Ethereum', 'DeFi', 'NFTs', 'Regulation', 'Technology', 'Mining', 'Trading', 'Web3', 'Blockchain'];
   const sources = ['CoinDesk', 'CoinTelegraph', 'Decrypt', 'The Block', 'CryptoPanic', 'CoinGecko', 'Blockworks', 'CryptoSlate', 'BeInCrypto', 'CryptoNews'];
 
-  return topics.map((title, index) => ({
+  return uniqueTopics.map((title, index) => ({
     id: `unique-${index + 1}`,
     title,
-    summary: `${title.substring(0, 100)}... This article explores the latest developments and their impact on the cryptocurrency market.`,
+    summary: `${title.substring(0, 100)}... This comprehensive analysis explores the latest developments and their significant impact on the cryptocurrency market ecosystem.`,
     category: categories[index % categories.length],
     date: formatDate(new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString()),
     readTime: `${Math.floor(Math.random() * 5) + 2} min read`,
     imageUrl: `https://picsum.photos/400/300?random=${index + 50}`,
-    content: `This is a comprehensive analysis of ${title.toLowerCase()}. The cryptocurrency market continues to evolve rapidly, with new developments emerging daily. Industry experts believe this trend will significantly impact the broader adoption of blockchain technology and digital assets. Stay tuned for more updates on this developing story.`,
+    content: `This is a comprehensive analysis of ${title.toLowerCase()}. The cryptocurrency market continues to evolve rapidly, with new developments emerging daily that shape the future of digital finance. Industry experts believe this trend will significantly impact the broader adoption of blockchain technology and digital assets across various sectors. Market analysts are closely monitoring these developments as they could indicate major shifts in the cryptocurrency landscape. Stay tuned for more updates on this developing story.`,
     source: sources[index % sources.length],
     url: '#'
   }));
