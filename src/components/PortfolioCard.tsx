@@ -1,15 +1,16 @@
+
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
 import { useQuery } from "@tanstack/react-query";
 
 const fetchBitcoinPrices = async () => {
   const response = await fetch(
-    "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=180&interval=daily"
+    "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=7&interval=daily"
   );
   const data = await response.json();
   
-  // Format data for the chart - take last 6 months
-  return data.prices.slice(-180).map(([timestamp, price]: [number, number]) => ({
-    date: new Date(timestamp).toLocaleDateString('en-US', { month: 'short' }),
+  // Format data for the chart - take last 7 days
+  return data.prices.map(([timestamp, price]: [number, number]) => ({
+    date: new Date(timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
     price: Math.round(price)
   }));
 };
@@ -46,7 +47,7 @@ const PortfolioCard = () => {
             <YAxis 
               stroke="#E6E4DD"
               fontSize={12}
-              tickFormatter={(value) => `$${value}`}
+              tickFormatter={(value) => `$${value.toLocaleString()}`}
             />
             <Tooltip 
               contentStyle={{ 

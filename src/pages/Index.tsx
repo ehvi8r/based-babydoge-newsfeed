@@ -7,26 +7,28 @@ import AnnouncementBanner from "@/components/AnnouncementBanner";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background p-8">
+    <div className="min-h-screen bg-background p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
         <header className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <img 
               src="https://babydoge20.com/assets/images/BABYlogo.png" 
               alt="Based BabyDoge Logo" 
-              className="w-8 h-8"
+              className="w-8 h-8 sm:w-10 sm:h-10"
             />
-            <h1 className="text-3xl font-bold">Based BabyDoge Dashboard</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold">Based BabyDoge Dashboard</h1>
           </div>
-          <p className="text-muted-foreground">Welcome back to your portfolio (More on the way)</p>
+          <p className="text-muted-foreground text-sm sm:text-base">
+            Welcome back to your cryptocurrency portfolio
+          </p>
         </header>
         
         <AnnouncementBanner />
         
         <MarketStats />
         
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8 mb-8">
+          <div className="xl:col-span-2">
             <CryptoChart />
           </div>
           <div>
