@@ -10,7 +10,14 @@ const Index = () => {
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-7xl mx-auto">
         <header className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Based BabyDoge Dashboard</h1>
+          <div className="flex items-center gap-3 mb-2">
+            <img 
+              src="https://babydoge20.com/assets/images/logobwbasedwhite.png" 
+              alt="Based BabyDoge Logo" 
+              className="w-8 h-8"
+            />
+            <h1 className="text-3xl font-bold">Based BabyDoge Dashboard</h1>
+          </div>
           <p className="text-muted-foreground">Welcome back to your portfolio (More on the way)</p>
         </header>
         
