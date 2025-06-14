@@ -12,7 +12,7 @@ const Index = () => {
         <header className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <img 
-              src="https://babydoge20.com/assets/images/logobwbasedwhite.png" 
+              src="https://babydoge20.com/assets/images/BABYlogo.png" 
               alt="Based BabyDoge Logo" 
               className="w-8 h-8"
             />
