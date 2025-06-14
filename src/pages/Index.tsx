@@ -4,6 +4,7 @@ import CryptoChart from "@/components/CryptoChart";
 import PortfolioCard from "@/components/PortfolioCard";
 import CryptoList from "@/components/CryptoList";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 const Index = () => {
   return (
@@ -23,20 +24,30 @@ const Index = () => {
           </p>
         </header>
         
-        <AnnouncementBanner />
+        <ErrorBoundary>
+          <AnnouncementBanner />
+        </ErrorBoundary>
         
-        <MarketStats />
+        <ErrorBoundary>
+          <MarketStats />
+        </ErrorBoundary>
         
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8 mb-8">
           <div className="xl:col-span-2">
-            <CryptoChart />
+            <ErrorBoundary>
+              <CryptoChart />
+            </ErrorBoundary>
           </div>
           <div>
-            <PortfolioCard />
+            <ErrorBoundary>
+              <PortfolioCard />
+            </ErrorBoundary>
           </div>
         </div>
         
-        <CryptoList />
+        <ErrorBoundary>
+          <CryptoList />
+        </ErrorBoundary>
       </div>
     </div>
   );

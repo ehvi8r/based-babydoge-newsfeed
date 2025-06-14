@@ -1,20 +1,23 @@
 
-import { ArrowUpIcon, ArrowDownIcon } from "lucide-react";
+import { ArrowUpIcon, ArrowDownIcon, AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { fetchWithCache } from "@/utils/apiUtils";
 
 const fetchCryptoData = async () => {
-  const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false');
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
-  }
-  return response.json();
+  return fetchWithCache(
+    'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false',
+    'crypto-list',
+    10 // 10 minute cache
+  );
 };
 
 const CryptoList = () => {
-  const { data: cryptos, isLoading } = useQuery({
+  const { data: cryptos, isLoading, isError } = useQuery({
     queryKey: ['cryptos'],
     queryFn: fetchCryptoData,
-    refetchInterval: 30000, // Refetch every 30 seconds
+    refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
+    retry: false, // Let our utility handle retries
+    staleTime: 5 * 60 * 1000, // Consider data stale after 5 minutes
   });
 
   if (isLoading) {
@@ -34,6 +37,23 @@ const CryptoList = () => {
               <div className="h-4 bg-secondary rounded w-16"></div>
             </div>
           ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="glass-card rounded-lg p-6 animate-fade-in">
+        <h2 className="text-xl font-semibold mb-6">Top Cryptocurrencies</h2>
+        <div className="flex items-center justify-center py-8">
+          <div className="flex items-center gap-3 text-warning">
+            <AlertTriangle className="w-5 h-5" />
+            <div className="text-center">
+              <p className="font-medium">Cryptocurrency Data Unavailable</p>
+              <p className="text-sm text-muted-foreground">Unable to load market data. Please try again later.</p>
+            </div>
+          </div>
         </div>
       </div>
     );

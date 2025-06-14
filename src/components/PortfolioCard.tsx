@@ -1,12 +1,15 @@
 
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
 import { useQuery } from "@tanstack/react-query";
+import { AlertTriangle } from "lucide-react";
+import { fetchWithCache } from "@/utils/apiUtils";
 
 const fetchBitcoinPrices = async () => {
-  const response = await fetch(
-    "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=7&interval=daily"
+  const data = await fetchWithCache(
+    "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=7&interval=daily",
+    'bitcoin-prices',
+    10 // 10 minute cache
   );
-  const data = await response.json();
   
   // Format data for the chart - take last 7 days
   return data.prices.map(([timestamp, price]: [number, number]) => ({
@@ -16,10 +19,12 @@ const fetchBitcoinPrices = async () => {
 };
 
 const PortfolioCard = () => {
-  const { data: priceData, isLoading } = useQuery({
+  const { data: priceData, isLoading, isError } = useQuery({
     queryKey: ['bitcoinPrices'],
     queryFn: fetchBitcoinPrices,
-    refetchInterval: 60000, // Refetch every minute
+    refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
+    retry: false, // Let our utility handle retries
+    staleTime: 5 * 60 * 1000, // Consider data stale after 5 minutes
   });
 
   if (isLoading) {
@@ -27,7 +32,24 @@ const PortfolioCard = () => {
       <div className="glass-card p-6 rounded-lg mb-8 animate-fade-in">
         <h2 className="text-xl font-semibold mb-6">Bitcoin Performance</h2>
         <div className="w-full h-[200px] flex items-center justify-center">
-          <span className="text-muted-foreground">Loading...</span>
+          <span className="text-muted-foreground">Loading chart data...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="glass-card p-6 rounded-lg mb-8 animate-fade-in">
+        <h2 className="text-xl font-semibold mb-6">Bitcoin Performance</h2>
+        <div className="w-full h-[200px] flex items-center justify-center">
+          <div className="flex items-center gap-3 text-warning">
+            <AlertTriangle className="w-5 h-5" />
+            <div className="text-center">
+              <p className="font-medium">Chart Unavailable</p>
+              <p className="text-sm text-muted-foreground">Unable to load Bitcoin price data</p>
+            </div>
+          </div>
         </div>
       </div>
     );

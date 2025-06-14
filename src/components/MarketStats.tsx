@@ -1,20 +1,23 @@
 
-import { ArrowUpIcon, ArrowDownIcon, TrendingUpIcon } from "lucide-react";
+import { ArrowUpIcon, ArrowDownIcon, TrendingUpIcon, AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { fetchWithCache } from "@/utils/apiUtils";
 
 const fetchGlobalData = async () => {
-  const response = await fetch('https://api.coingecko.com/api/v3/global');
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
-  }
-  return response.json();
+  return fetchWithCache(
+    'https://api.coingecko.com/api/v3/global',
+    'global-data',
+    10 // 10 minute cache
+  );
 };
 
 const MarketStats = () => {
-  const { data: globalData, isLoading } = useQuery({
+  const { data: globalData, isLoading, isError } = useQuery({
     queryKey: ['globalData'],
     queryFn: fetchGlobalData,
-    refetchInterval: 60000, // Refetch every minute
+    refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
+    retry: false, // Let our utility handle retries
+    staleTime: 5 * 60 * 1000, // Consider data stale after 5 minutes
   });
 
   if (isLoading) {
@@ -27,6 +30,22 @@ const MarketStats = () => {
             <div className="h-4 bg-secondary rounded w-1/2"></div>
           </div>
         ))}
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="glass-card p-6 rounded-lg mb-8 animate-fade-in">
+        <div className="flex items-center gap-3 text-warning">
+          <AlertTriangle className="w-5 h-5" />
+          <div>
+            <h3 className="font-semibold">Market Data Unavailable</h3>
+            <p className="text-sm text-muted-foreground">
+              Unable to fetch market statistics. Please try again later.
+            </p>
+          </div>
+        </div>
       </div>
     );
   }
@@ -44,7 +63,7 @@ const MarketStats = () => {
           <TrendingUpIcon className="w-4 h-4 text-success" />
         </div>
         <p className="text-2xl font-semibold mt-2">
-          ${marketCap ? (marketCap / 1e12).toFixed(1) : '0'}T
+          ${marketCap ? (marketCap / 1e12).toFixed(1) : '--'}T
         </p>
         <span className={`text-sm flex items-center gap-1 ${
           marketCapChange >= 0 ? 'text-success' : 'text-warning'
@@ -54,7 +73,7 @@ const MarketStats = () => {
           ) : (
             <ArrowDownIcon className="w-3 h-3" />
           )}
-          {marketCapChange ? Math.abs(marketCapChange).toFixed(1) : '0'}%
+          {marketCapChange ? Math.abs(marketCapChange).toFixed(1) : '--'}%
         </span>
       </div>
       
@@ -64,9 +83,9 @@ const MarketStats = () => {
           <TrendingUpIcon className="w-4 h-4 text-success" />
         </div>
         <p className="text-2xl font-semibold mt-2">
-          ${volume24h ? (volume24h / 1e9).toFixed(1) : '0'}B
+          ${volume24h ? (volume24h / 1e9).toFixed(1) : '--'}B
         </p>
-        <span className="text-sm text-success flex items-center gap-1">
+        <span className="text-sm text-muted-foreground flex items-center gap-1">
           <ArrowUpIcon className="w-3 h-3" />
           --
         </span>
@@ -78,9 +97,9 @@ const MarketStats = () => {
           <TrendingUpIcon className="w-4 h-4 text-warning" />
         </div>
         <p className="text-2xl font-semibold mt-2">
-          {btcDominance ? btcDominance.toFixed(1) : '0'}%
+          {btcDominance ? btcDominance.toFixed(1) : '--'}%
         </p>
-        <span className="text-sm text-warning flex items-center gap-1">
+        <span className="text-sm text-muted-foreground flex items-center gap-1">
           <ArrowDownIcon className="w-3 h-3" />
           --
         </span>
