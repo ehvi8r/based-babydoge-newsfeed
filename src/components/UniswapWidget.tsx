@@ -5,14 +5,28 @@ import { useState, useEffect } from 'react';
 const UniswapWidget = () => {
   const [widgetError, setWidgetError] = useState<string | null>(null);
   const [widgetKey, setWidgetKey] = useState(0);
+  const [isReady, setIsReady] = useState(false);
 
   console.log('UniswapWidget rendering...');
 
-  // Ensure BigInt is available globally
+  // Ensure BigInt and other globals are available
   useEffect(() => {
-    if (typeof window !== 'undefined' && typeof BigInt !== 'undefined') {
-      (window as any).BigInt = BigInt;
-      (globalThis as any).BigInt = BigInt;
+    if (typeof window !== 'undefined') {
+      // Ensure BigInt is available
+      if (typeof BigInt !== 'undefined') {
+        (window as any).BigInt = BigInt;
+        (globalThis as any).BigInt = BigInt;
+      }
+      
+      // Add additional global definitions that Uniswap might need
+      if (!(window as any).global) {
+        (window as any).global = window;
+      }
+      
+      // Give it a moment to settle
+      setTimeout(() => setIsReady(true), 100);
+    } else {
+      setIsReady(true);
     }
   }, []);
 
@@ -36,14 +50,29 @@ const UniswapWidget = () => {
     },
   };
 
-  const BASE_USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
-  const BASE_CHAIN_ID = 8453;
+  // Use Ethereum mainnet instead of Base for better compatibility
+  const ETH_USDC_ADDRESS = "0xA0b86a33E6417bFf9a634482bC24bbA11D4aE41C"; // USDC on Ethereum
+  const ETH_CHAIN_ID = 1; // Ethereum mainnet
 
   console.log('Widget config:', {
-    chainId: BASE_CHAIN_ID,
-    outputToken: BASE_USDC_ADDRESS,
-    widgetKey
+    chainId: ETH_CHAIN_ID,
+    outputToken: ETH_USDC_ADDRESS,
+    widgetKey,
+    isReady
   });
+
+  if (!isReady) {
+    return (
+      <div className="glass-card p-6 rounded-lg animate-fade-in">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-semibold">Trade Tokens</h2>
+        </div>
+        <div className="w-full p-4 text-center">
+          <p>Loading widget...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (widgetError) {
     return (
@@ -57,6 +86,8 @@ const UniswapWidget = () => {
             onClick={() => {
               setWidgetError(null);
               setWidgetKey(prev => prev + 1);
+              setIsReady(false);
+              setTimeout(() => setIsReady(true), 100);
             }} 
             className="mt-2 px-4 py-2 bg-red-600 text-white rounded"
           >
@@ -75,13 +106,13 @@ const UniswapWidget = () => {
         </div>
         <div className="w-full">
           <SwapWidget
-            key={widgetKey}
+            key={`widget-${widgetKey}`}
             theme={theme}
             tokenList="https://gateway.ipfs.io/ipns/tokens.uniswap.org"
             width="100%"
-            defaultChainId={BASE_CHAIN_ID}
+            defaultChainId={ETH_CHAIN_ID}
             defaultInputTokenAddress="NATIVE"
-            defaultOutputTokenAddress={BASE_USDC_ADDRESS}
+            defaultOutputTokenAddress={ETH_USDC_ADDRESS}
             onError={(error) => {
               console.error('Uniswap Widget Error:', error);
               setWidgetError(error.message || 'Unknown widget error');
