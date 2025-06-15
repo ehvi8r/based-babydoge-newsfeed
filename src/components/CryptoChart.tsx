@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import TradingViewWidget from "react-tradingview-widget";
 import ChainTokenSelector from "./ChainTokenSelector";
@@ -65,39 +64,55 @@ const CryptoChart = ({
   symbol = "BINANCE:BTCUSDT",
   name = "Bitcoin",
 }: CryptoChartProps) => {
-  // Local selection state
-  const [selectedChain, setSelectedChain] = useState<"ethereum" | "base">(
-    symbol?.includes("BASE") || symbol?.includes("AERODROME") ? "base" : "ethereum"
-  );
-  const [inputSymbol, setInputSymbol] = useState<string>("");
-  const [inputAddress, setInputAddress] = useState<string>("");
+  // Custom selector state (null = no override, use dashboard)
+  const [customChart, setCustomChart] = useState<{
+    chain: "ethereum" | "base";
+    symbol: string;
+    address: string;
+  } | null>(null);
 
-  // On selector change
-  const handleSelectorChange = (
+  // Handlers for selector
+  const handleApply = (
     chain: "ethereum" | "base",
-    symbol: string,
-    address: string
+    sym: string,
+    addr: string
   ) => {
-    setSelectedChain(chain);
-    setInputSymbol(symbol);
-    setInputAddress(address);
+    // Nothing entered: don't override chart, stay on dashboard selection.
+    if (!sym && !addr) {
+      setCustomChart(null);
+      return;
+    }
+    setCustomChart({
+      chain,
+      symbol: sym,
+      address: addr,
+    });
   };
 
-  // Compute TV symbol from input
-  const chartSymbol = generateTradingViewSymbol(selectedChain, inputSymbol, inputAddress);
+  const handleClear = () => setCustomChart(null);
 
-  // Chart title display
-  let chartTitle = "Price Chart";
-  if (inputSymbol) chartTitle = `${inputSymbol.toUpperCase()} Price Chart`;
-  else if (inputAddress) chartTitle = `Token (by Contract) Price Chart`;
+  // Choose which chart to display
+  let chartSymbol: string = symbol || "BINANCE:BTCUSDT";
+  let chartTitle: string = name ? `${name} Price Chart` : "Price Chart";
+
+  if (customChart && (customChart.symbol || customChart.address)) {
+    chartSymbol = generateTradingViewSymbol(
+      customChart.chain,
+      customChart.symbol,
+      customChart.address
+    );
+
+    if (customChart.symbol) chartTitle = `${customChart.symbol.toUpperCase()} Price Chart`;
+    else if (customChart.address) chartTitle = `Token (by Contract) Price Chart`;
+    else chartTitle = "Price Chart";
+  }
 
   return (
     <div className="glass-card p-6 rounded-lg mb-8 animate-fade-in">
+      {/* Token Selector - only overrides the chart if Show pressed */}
       <ChainTokenSelector
-        initialChain={selectedChain}
-        initialSymbol={inputSymbol}
-        initialAddress={inputAddress}
-        onChange={handleSelectorChange}
+        onApply={handleApply}
+        onClear={handleClear}
       />
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold">{chartTitle}</h2>
@@ -123,4 +138,3 @@ const CryptoChart = ({
 };
 
 export default CryptoChart;
-

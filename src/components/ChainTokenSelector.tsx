@@ -9,7 +9,8 @@ export interface ChainTokenSelectorProps {
   initialChain?: ChainOption;
   initialSymbol?: string;
   initialAddress?: string;
-  onChange: (chain: ChainOption, symbol: string, address: string) => void;
+  onApply: (chain: ChainOption, symbol: string, address: string) => void;
+  onClear?: () => void;
 }
 
 const CHAIN_LABELS: Record<ChainOption, string> = {
@@ -21,7 +22,8 @@ const ChainTokenSelector: React.FC<ChainTokenSelectorProps> = ({
   initialChain = "ethereum",
   initialSymbol = "",
   initialAddress = "",
-  onChange,
+  onApply,
+  onClear,
 }) => {
   const [chain, setChain] = useState<ChainOption>(initialChain);
   const [symbol, setSymbol] = useState<string>(initialSymbol);
@@ -37,10 +39,16 @@ const ChainTokenSelector: React.FC<ChainTokenSelectorProps> = ({
   }
 
   function handleApply() {
-    onChange(chain, symbol.trim().toUpperCase(), address.trim());
+    onApply(chain, symbol.trim().toUpperCase(), address.trim());
   }
 
-  // Show error only if touched and not empty
+  function handleClear() {
+    setSymbol("");
+    setAddress("");
+    setTouched({ symbol: false, address: false });
+    if (onClear) onClear();
+  }
+
   const addressError =
     touched.address && address && !isValidEthAddress(address)
       ? "Invalid contract address"
@@ -77,6 +85,7 @@ const ChainTokenSelector: React.FC<ChainTokenSelectorProps> = ({
           onChange={e => setSymbol(e.target.value)}
           onBlur={() => setTouched(t => ({ ...t, symbol: true }))}
           className="min-w-[120px]"
+          autoComplete="off"
         />
       </div>
       <div>
@@ -97,17 +106,25 @@ const ChainTokenSelector: React.FC<ChainTokenSelectorProps> = ({
           <div className="text-xs text-warning mt-1">{addressError}</div>
         )}
       </div>
-      <Button
-        type="button"
-        className="sm:ml-2 mt-2 sm:mt-0"
-        disabled={!!address && !isValidEthAddress(address)}
-        onClick={handleApply}
-      >
-        Show Chart
-      </Button>
+      <div className="flex gap-2 sm:ml-2 mt-2 sm:mt-0">
+        <Button
+          type="button"
+          variant="default"
+          disabled={!!address && !isValidEthAddress(address)}
+          onClick={handleApply}
+        >
+          Show Chart
+        </Button>
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={handleClear}
+        >
+          Clear
+        </Button>
+      </div>
     </div>
   );
 };
 
 export default ChainTokenSelector;
-
