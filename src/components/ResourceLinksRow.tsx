@@ -1,5 +1,6 @@
 
 import React from "react";
+import CryptoImage from "@/components/CryptoImage";
 
 const links = [
   {
@@ -51,7 +52,7 @@ const links = [
     href: "https://app.bubblemaps.io/",
     alt: "BubbleMaps",
     src: "/images/bubblemaps.png",
-  }
+  },
 ];
 
 const ResourceLinksRow = () => (
@@ -64,12 +65,11 @@ const ResourceLinksRow = () => (
         rel="noopener noreferrer"
         className="hover:scale-105 transform transition"
       >
-        <img
+        <CryptoImage
           alt={link.alt}
           src={link.src}
-          width={130}
-          className="logo-2 h-auto drop-shadow rounded bg-white p-1"
-          style={{ maxHeight: 56 }}
+          className="logo-2 h-14 w-auto drop-shadow rounded bg-white p-1"
+          fallbackText={link.alt.charAt(0)}
         />
       </a>
     ))}

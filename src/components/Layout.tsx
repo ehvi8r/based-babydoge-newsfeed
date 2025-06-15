@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import CryptoImage from "@/components/CryptoImage";
 import AdBanner from "@/components/AdBanner";
@@ -72,7 +71,6 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       </header>
       
       <main>{children}</main>
-      <AdBanner />
     </div>
   );
 };
