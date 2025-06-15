@@ -1,7 +1,8 @@
+
 import React, { useState } from "react";
 import TradingViewWidget from 'react-tradingview-widget';
+// Removed: import StaticCustomTokenDialog from "./StaticCustomTokenDialog";
 import CustomTokenDialog from "./CustomTokenDialog";
-import StaticCustomTokenDialog from "./StaticCustomTokenDialog";
 
 interface CryptoChartProps {
   symbol?: string;
@@ -39,8 +40,7 @@ const CryptoChart = ({ symbol = "BINANCE:BTCUSDT", name = "Bitcoin" }: CryptoCha
 
   return (
     <div className="glass-card p-6 rounded-lg mb-8 animate-fade-in">
-      {/* Static custom token form above the chart */}
-      <StaticCustomTokenDialog />
+      {/* Removed StaticCustomTokenDialog from here */}
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-2">
         <h2 className="text-xl font-semibold">Price Chart</h2>
