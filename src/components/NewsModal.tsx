@@ -1,4 +1,3 @@
-
 import {
   Dialog,
   DialogContent,
@@ -33,26 +32,38 @@ const NewsModal = ({ news, isOpen, onClose }: NewsModalProps) => {
   if (!news) return null;
 
   const handleReadFull = () => {
-    console.log('Read Full Article clicked');
-    console.log('News object:', news);
-    console.log('URL value:', news.url);
-    console.log('URL type:', typeof news.url);
-    console.log('URL length:', news.url?.length);
-    
-    if (news.url && news.url.trim() !== '' && news.url !== '#' && news.url !== 'undefined') {
-      console.log('Opening URL:', news.url);
-      window.open(news.url, '_blank', 'noopener,noreferrer');
+    console.log('=== Read Full Article Debug Info ===');
+    console.log('news.url RAW:', news.url);
+    console.log('news.url (with delimiters): >' + news.url + '<');
+    console.log('news.url type:', typeof news.url);
+    console.log('news.url length:', news.url?.length);
+    console.log('news object:', news);
+    const trimmedUrl = (news.url || '').trim();
+    console.log('news.url.trim(): >' + trimmedUrl + '<');
+    if (
+      trimmedUrl &&
+      trimmedUrl !== '#' &&
+      trimmedUrl.toLowerCase() !== 'undefined' &&
+      trimmedUrl.toLowerCase() !== 'null' &&
+      trimmedUrl.toLowerCase() !== '' &&
+      trimmedUrl.toLowerCase().indexOf('about:blank') === -1
+    ) {
+      console.log('Opening URL:', trimmedUrl);
+      window.open(trimmedUrl, '_blank', 'noopener,noreferrer');
     } else {
       console.error('No valid URL found for this article. URL value:', news.url);
     }
   };
 
-  // Check if URL is valid for display purposes
-  const hasValidUrl = news.url && 
-                     news.url.trim() !== '' && 
-                     news.url !== '#' && 
-                     news.url !== 'undefined' && 
-                     news.url.startsWith('http');
+  const hasValidUrl = !!(
+    news.url &&
+    typeof news.url === "string" &&
+    news.url.trim() !== "" &&
+    news.url !== "#" &&
+    news.url.toLowerCase() !== "undefined" &&
+    news.url.toLowerCase() !== "null" &&
+    news.url.startsWith("http")
+  );
 
   console.log('Article URL check:', {
     url: news.url,
