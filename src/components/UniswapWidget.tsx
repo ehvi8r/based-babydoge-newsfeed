@@ -7,6 +7,13 @@ const UniswapWidget = () => {
 
   console.log('UniswapWidget rendering...');
 
+  // Add BigInt polyfill for compatibility
+  useEffect(() => {
+    if (typeof BigInt === 'undefined') {
+      console.warn('BigInt not supported, widget may not work properly');
+    }
+  }, []);
+
   const theme = {
     primary: '#8989DE',
     secondary: '#3A3935',
@@ -67,7 +74,6 @@ const UniswapWidget = () => {
             defaultChainId={8453}
             defaultInputTokenAddress="NATIVE"
             defaultOutputTokenAddress="0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
-            chains={[8453]}
             onError={(error) => {
               console.error('Uniswap Widget Error:', error);
               setWidgetError(error.message || 'Unknown widget error');
