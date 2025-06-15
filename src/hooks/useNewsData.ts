@@ -155,7 +155,6 @@ const generateUniqueNews = (): NewsItem[] => {
   const sources = ['CoinDesk', 'CoinTelegraph', 'Decrypt', 'The Block', 'CryptoPanic', 'CoinGecko', 'Blockworks', 'CryptoSlate', 'BeInCrypto', 'CryptoNews'];
 
   return uniqueStories.map((story, index) => {
-    // Always sanitize here!
     const mappedSource = sources[index % sources.length];
     return {
       id: `unique-${index + 1}`,
@@ -169,7 +168,7 @@ const generateUniqueNews = (): NewsItem[] => {
       imageUrl: `https://picsum.photos/400/300?random=${index + 50}`,
       content: `This comprehensive analysis explores ${story.title.toLowerCase()}. ${story.summary} Industry experts are closely monitoring these developments as they represent significant shifts in the cryptocurrency landscape. Market analysts believe this trend will have lasting impacts on digital asset adoption and blockchain technology implementation. The implications for both retail and institutional investors continue to unfold as the market matures.`,
       source: mappedSource,
-      url: getHomepageForSource(mappedSource), // Use homepage!
+      url: getHomepageForSource(mappedSource), // <-- Always use the homepage!
     };
   });
 };
