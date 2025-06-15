@@ -24,7 +24,7 @@ const CHAIN_CONFIG: Record<
 > = {
   ethereum: {
     name: 'Ethereum',
-    rpc: 'https://rpc.ankr.com/eth', // from Chainlist.org
+    rpc: 'https://rpc.ankr.com/eth',
     chainId: 1,
     inputToken: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC
     outputToken: 'ETH',
@@ -41,7 +41,7 @@ const CHAIN_CONFIG: Record<
     rpc: 'https://mainnet.base.org',
     chainId: 8453,
     inputToken: '0x4200000000000000000000000000000000000006', // ETH
-    outputToken: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC (assumed bridged)
+    outputToken: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC
   },
 }
 
@@ -51,6 +51,19 @@ const getChainById = (chainId: number): ChainOption | null => {
       ([, config]) => config.chainId === chainId
     )?.[0] as ChainOption) || null
   )
+}
+
+const darkTheme = {
+  primary: '#8989DE',
+  secondary: '#3A3935',
+  interactive: '#8989DE',
+  container: '#141413',
+  module: '#3A3935',
+  accent: '#8989DE',
+  outline: '#605F5B',
+  dialog: '#141413',
+  fontFamily: 'Inter',
+  borderRadius: 1.0,
 }
 
 const UniswapWidget: React.FC = () => {
@@ -120,7 +133,7 @@ const UniswapWidget: React.FC = () => {
           chainId={config.chainId}
           defaultInputTokenAddress={config.inputToken}
           defaultOutputTokenAddress={config.outputToken}
-          theme="dark"
+          theme={darkTheme}
           width="100%"
         />
       </div>
