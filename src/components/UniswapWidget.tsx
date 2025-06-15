@@ -65,9 +65,9 @@ const UniswapWidget = () => {
             theme={theme}
             tokenList="https://gateway.ipfs.io/ipns/tokens.uniswap.org"
             width="100%"
-            defaultChainId={1}
+            defaultChainId={8453}
             defaultInputTokenAddress="NATIVE"
-            defaultOutputTokenAddress="0xA0b86a33E6441c8b2f5b9F4D1eF0A5f67F96CC3E"
+            defaultOutputTokenAddress="0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
             onError={(error) => {
               console.error('Uniswap Widget Error:', error);
               setWidgetError(error.message || 'Unknown widget error');
