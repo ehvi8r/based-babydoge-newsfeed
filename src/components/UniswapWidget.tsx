@@ -1,6 +1,5 @@
 
 import { SwapWidget } from '@uniswap/widgets';
-import '@uniswap/widgets/fonts.css';
 
 const UniswapWidget = () => {
   const theme = {
