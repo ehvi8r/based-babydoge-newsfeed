@@ -48,27 +48,19 @@ const Dashboard = () => {
             <MarketStats />
           </ErrorBoundary>
 
-          {/* Bitcoin Price - CryptoChart: full width, centered */}
-          <div className="flex justify-center w-full mb-8">
-            <div className="w-full max-w-3xl">
+          {/* Bitcoin Price and Performance - Full width, stacked */}
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8 mb-8">
+            <div className="col-span-1 xl:col-span-3">
               <ErrorBoundary>
                 <CryptoChart symbol={selectedCurrency.symbol} name={selectedCurrency.name} />
               </ErrorBoundary>
             </div>
-          </div>
-
-          {/* Bitcoin Performance - PortfolioCard: full width, centered, below CryptoChart */}
-          <div className="flex justify-center w-full mb-8">
-            <div className="w-full max-w-3xl">
+            <div className="col-span-1 xl:col-span-3">
               <ErrorBoundary>
                 <PortfolioCard />
               </ErrorBoundary>
             </div>
-          </div>
-
-          {/* Trade Tokens widget - full width and centered */}
-          <div className="flex justify-center w-full mb-8">
-            <div className="w-full max-w-3xl">
+            <div className="col-span-1 xl:col-span-3">
               <ErrorBoundary>
                 <UniswapWidget />
               </ErrorBoundary>
@@ -83,7 +75,7 @@ const Dashboard = () => {
               <TopBaseCurrencies onCurrencySelect={handleCurrencySelect} />
             </ErrorBoundary>
           </div>
-          
+
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8 mb-8">
             <ErrorBoundary>
               <BaseCurrencies onCurrencySelect={handleCurrencySelect} />
