@@ -50,10 +50,13 @@ const StaticCustomTokenDialog: React.FC = () => {
               style={{ width: "45ch" }}
             />
           </div>
+          {/* Show Chart Button (15ch) */}
+          <div className="flex-1 min-w-0 flex md:block" style={{ maxWidth: "15ch" }}>
+            <Button type="button" className="w-full" style={{ width: "15ch", minWidth: "100px" }} disabled>
+              Show Chart
+            </Button>
+          </div>
         </div>
-        <Button type="button" className="w-full" disabled>
-          Show Chart
-        </Button>
       </form>
     </div>
   );
