@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import TradingViewWidget from "react-tradingview-widget";
 import ChainTokenSelector from "./ChainTokenSelector";
@@ -92,7 +91,7 @@ const CryptoChart = ({
 
   // Choose which chart to display
   let chartSymbol: string = symbol || "BINANCE:BTCUSDT";
-  let chartTitle: string;
+  let chartTitle: string = "Price Chart"; // always ensure fallback
 
   if (customChart && (customChart.symbol || customChart.address)) {
     chartSymbol = generateTradingViewSymbol(
@@ -102,7 +101,7 @@ const CryptoChart = ({
     );
 
     // Only want the "pair" title if symbol is present
-    if (customChart && customChart.symbol) {
+    if (customChart.symbol) {
       if (customChart.chain === "base") {
         chartTitle = `Base ETH: ${customChart.symbol.toUpperCase()}`;
       } else if (customChart.chain === "ethereum") {
@@ -110,20 +109,18 @@ const CryptoChart = ({
       } else {
         chartTitle = `${customChart.symbol.toUpperCase()} Price Chart`;
       }
-    } else if (customChart && customChart.address) {
+    } else if (customChart.address) {
       chartTitle = `Token (by Contract) Price Chart`;
-    } else {
-      chartTitle = "Price Chart";
     }
-  } else {
-    // Fallback to incoming props
-    if (symbol && name && symbol.startsWith("BINANCE:")) {
-      // Attempt to show "ETH: BTC" etc for ETH/BTC
-      if (symbol.endsWith("USDT")) chartTitle = `ETH: ${symbol.replace("BINANCE:", "").replace("USDT", "")}`;
-      else chartTitle = `${name} Price Chart`;
+  } else if (symbol && name && symbol.startsWith("BINANCE:")) {
+    // Attempt to show "ETH: BTC" etc for ETH/BTC
+    if (symbol.endsWith("USDT")) {
+      chartTitle = `ETH: ${symbol.replace("BINANCE:", "").replace("USDT", "")}`;
     } else {
-      chartTitle = name ? `${name} Price Chart` : "Price Chart";
+      chartTitle = `${name} Price Chart`;
     }
+  } else if (name) {
+    chartTitle = `${name} Price Chart`;
   }
 
   return (
