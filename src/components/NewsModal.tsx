@@ -4,6 +4,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -32,18 +33,39 @@ const NewsModal = ({ news, isOpen, onClose }: NewsModalProps) => {
   if (!news) return null;
 
   const handleReadFull = () => {
-    console.log('Read Full Article clicked, URL:', news.url);
+    console.log('Read Full Article clicked');
+    console.log('News object:', news);
+    console.log('URL value:', news.url);
+    console.log('URL type:', typeof news.url);
+    console.log('URL length:', news.url?.length);
     
-    if (news.url && news.url.trim() !== '' && news.url !== '#') {
+    if (news.url && news.url.trim() !== '' && news.url !== '#' && news.url !== 'undefined') {
+      console.log('Opening URL:', news.url);
       window.open(news.url, '_blank', 'noopener,noreferrer');
     } else {
-      console.error('No valid URL found for this article');
+      console.error('No valid URL found for this article. URL value:', news.url);
     }
   };
+
+  // Check if URL is valid for display purposes
+  const hasValidUrl = news.url && 
+                     news.url.trim() !== '' && 
+                     news.url !== '#' && 
+                     news.url !== 'undefined' && 
+                     news.url.startsWith('http');
+
+  console.log('Article URL check:', {
+    url: news.url,
+    hasValidUrl,
+    title: news.title
+  });
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] p-0">
+        <DialogDescription className="sr-only">
+          Full article details for {news.title}
+        </DialogDescription>
         <ScrollArea className="max-h-[90vh]">
           <div className="p-6">
             <DialogHeader className="mb-6">
@@ -85,7 +107,7 @@ const NewsModal = ({ news, isOpen, onClose }: NewsModalProps) => {
               </div>
               
               <div className="border-t pt-4">
-                {news.url && news.url !== '#' ? (
+                {hasValidUrl ? (
                   <button
                     onClick={handleReadFull}
                     className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
