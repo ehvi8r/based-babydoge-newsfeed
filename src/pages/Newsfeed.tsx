@@ -1,18 +1,16 @@
+
 import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { RefreshCcw } from "lucide-react";
 import NewsCard from "@/components/NewsCard";
-import NewsModal from "@/components/NewsModal";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { useNewsData, NewsItem } from "@/hooks/useNewsData";
 import { useToast } from "@/hooks/use-toast";
 
 const Newsfeed = () => {
   console.log("Rendering Newsfeed");
-  const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const { toast } = useToast();
   
   const { data: newsData, isLoading, error, refetch, isFetching } = useNewsData();
@@ -121,15 +119,10 @@ const Newsfeed = () => {
             </ScrollArea>
           </div>
         </ErrorBoundary>
-
-        <NewsModal 
-          news={selectedNews}
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-        />
       </div>
     </div>
   );
 };
 
 export default Newsfeed;
+
