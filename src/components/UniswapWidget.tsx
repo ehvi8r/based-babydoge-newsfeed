@@ -67,6 +67,10 @@ const darkTheme = {
     button: 12,
     container: 16,
     actionButton: 12,
+    large: 16,
+    medium: 12,
+    small: 8,
+    xsmall: 4,
   },
 }
 
