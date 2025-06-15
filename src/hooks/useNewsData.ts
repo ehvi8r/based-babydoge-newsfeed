@@ -40,6 +40,37 @@ const estimateReadTime = (text: string): string => {
   return `${minutes} min read`;
 };
 
+// --- Mapping from source to homepage URL ---
+const sourceHomepageMap: Record<string, string> = {
+  "CoinDesk": "https://www.coindesk.com/",
+  "CoinTelegraph": "https://cointelegraph.com/",
+  "Decrypt": "https://decrypt.co/",
+  "The Block": "https://www.theblock.co/",
+  "CryptoPanic": "https://cryptopanic.com/",
+  "CoinGecko": "https://www.coingecko.com/",
+  "Blockworks": "https://blockworks.co/",
+  "CryptoSlate": "https://cryptoslate.com/",
+  "BeInCrypto": "https://beincrypto.com/",
+  "CryptoNews": "https://cryptonews.com/",
+};
+
+// Helper to get homepage for a given source name
+const getHomepageForSource = (source: string): string => {
+  // Try exact match first
+  if (sourceHomepageMap[source]) {
+    return sourceHomepageMap[source];
+  }
+  // Try to find by lowercased normalized key
+  const sourceKey = Object.keys(sourceHomepageMap).find(
+    (name) => name.toLowerCase() === source.toLowerCase()
+  );
+  if (sourceKey) {
+    return sourceHomepageMap[sourceKey];
+  }
+  // Default fallback
+  return "https://www.coindesk.com/";
+};
+
 // --- Utility function to sanitize URLs ---
 const sanitizeUrl = (url: string | undefined | null): string => {
   if (
@@ -125,6 +156,7 @@ const generateUniqueNews = (): NewsItem[] => {
 
   return uniqueStories.map((story, index) => {
     // Always sanitize here!
+    const mappedSource = sources[index % sources.length];
     return {
       id: `unique-${index + 1}`,
       title: story.title,
@@ -136,8 +168,8 @@ const generateUniqueNews = (): NewsItem[] => {
       readTime: `${Math.floor(Math.random() * 5) + 2} min read`,
       imageUrl: `https://picsum.photos/400/300?random=${index + 50}`,
       content: `This comprehensive analysis explores ${story.title.toLowerCase()}. ${story.summary} Industry experts are closely monitoring these developments as they represent significant shifts in the cryptocurrency landscape. Market analysts believe this trend will have lasting impacts on digital asset adoption and blockchain technology implementation. The implications for both retail and institutional investors continue to unfold as the market matures.`,
-      source: sources[index % sources.length],
-      url: sanitizeUrl(story.url), // <== 100% ensure proper URL!
+      source: mappedSource,
+      url: getHomepageForSource(mappedSource), // Use homepage!
     };
   });
 };
@@ -175,21 +207,25 @@ const fetchCryptoNews = async (): Promise<NewsItem[]> => {
             return true;
           })
           .slice(0, 15)
-          .map((item: CryptoPanicItem, index: number) => ({
-            id: `panic-${item.id}`,
-            title: item.title,
-            summary:
-              item.title.length > 150
-                ? item.title.substring(0, 150) + "..."
-                : item.title,
-            category: "Cryptocurrency",
-            date: formatDate(item.published_at),
-            readTime: estimateReadTime(item.title),
-            imageUrl: `https://picsum.photos/400/300?random=${index + 100}`,
-            content: `Read the full article at the source for complete details about: ${item.title}`,
-            source: item.source?.title || "CryptoPanic",
-            url: sanitizeUrl(item.url), // <== extra-safe
-          }));
+          .map((item: CryptoPanicItem, index: number) => {
+            // Always use the homepage for the source
+            const source = item.source?.title || "CryptoPanic";
+            return {
+              id: `panic-${item.id}`,
+              title: item.title,
+              summary:
+                item.title.length > 150
+                  ? item.title.substring(0, 150) + "..."
+                  : item.title,
+              category: "Cryptocurrency",
+              date: formatDate(item.published_at),
+              readTime: estimateReadTime(item.title),
+              imageUrl: `https://picsum.photos/400/300?random=${index + 100}`,
+              content: `Read the full article at the source for complete details about: ${item.title}`,
+              source,
+              url: getHomepageForSource(source), // Homepage always!
+            };
+          });
 
         newsItems.push(...panicItems);
         console.log(`Added ${panicItems.length} unique items from CryptoPanic`);
