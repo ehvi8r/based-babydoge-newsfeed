@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { SwapWidget } from '@uniswap/widgets'
+import { ethers } from 'ethers'
+import '@uniswap/widgets/fonts.css' // Still needed for widget fonts
 import './assets/theme.css'
 import './assets/fonts.css'
 
@@ -9,7 +11,7 @@ declare global {
   }
 }
 
-type ChainOption = 'ethereum' | 'bnb' | 'base'
+type ChainOption = 'ethereum' | 'base'
 
 const CHAIN_CONFIG: Record<
   ChainOption,
@@ -27,13 +29,6 @@ const CHAIN_CONFIG: Record<
     chainId: 1,
     inputToken: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC
     outputToken: 'ETH',
-  },
-  bnb: {
-    name: 'BNB Chain',
-    rpc: 'https://bsc-dataseed.binance.org/',
-    chainId: 56,
-    inputToken: '0x55d398326f99059fF775485246999027B3197955', // USDT
-    outputToken: '0xBB4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c', // WBNB
   },
   base: {
     name: 'Base',
@@ -76,7 +71,6 @@ const darkTheme = {
 const UniswapWidget: React.FC = () => {
   const [selectedChain, setSelectedChain] = useState<ChainOption>('base')
 
-  // Detect connected wallet chain
   useEffect(() => {
     const detectChain = async () => {
       if (typeof window !== 'undefined' && window.ethereum) {
@@ -93,7 +87,6 @@ const UniswapWidget: React.FC = () => {
 
     detectChain()
 
-    // Optional: update on chain change
     if (window.ethereum) {
       const handleChainChanged = (chainIdHex: string) => {
         const chainId = parseInt(chainIdHex, 16)
@@ -102,7 +95,6 @@ const UniswapWidget: React.FC = () => {
       }
 
       window.ethereum.on('chainChanged', handleChainChanged)
-
       return () => {
         window.ethereum.removeListener('chainChanged', handleChainChanged)
       }
@@ -110,6 +102,12 @@ const UniswapWidget: React.FC = () => {
   }, [])
 
   const config = CHAIN_CONFIG[selectedChain]
+  const provider =
+    typeof window !== 'undefined' && window.ethereum
+      ? new ethers.providers.Web3Provider(window.ethereum)
+      : undefined
+
+  if (!config) return <div>Unsupported chain selected.</div>
 
   return (
     <div className="glass-card p-6 rounded-lg animate-fade-in">
@@ -125,7 +123,7 @@ const UniswapWidget: React.FC = () => {
             id="chain-select"
             value={selectedChain}
             onChange={(e) => setSelectedChain(e.target.value as ChainOption)}
-            className="w-full p-2 border border-secondary rounded-md bg-background text-foreground"
+            className="w-full p-2 border border-gray-600 rounded-md bg-zinc-900 text-white"
           >
             {Object.entries(CHAIN_CONFIG).map(([key, value]) => (
               <option key={key} value={key}>
@@ -134,11 +132,10 @@ const UniswapWidget: React.FC = () => {
             ))}
           </select>
         </div>
-
         <SwapWidget
-          provider={window.ethereum}
+          provider={provider}
           jsonRpcUrlMap={{
-            [config.chainId]: [config.rpc]
+            [config.chainId]: [config.rpc],
           }}
           defaultInputTokenAddress={config.inputToken}
           defaultOutputTokenAddress={config.outputToken}
@@ -148,6 +145,10 @@ const UniswapWidget: React.FC = () => {
       </div>
     </div>
   )
+}
+
+export default UniswapWidget
+
 }
 
 export default UniswapWidget
