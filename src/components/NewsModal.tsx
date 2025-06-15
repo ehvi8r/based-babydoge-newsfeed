@@ -31,10 +31,7 @@ interface NewsModalProps {
 const NewsModal = ({ news, isOpen, onClose }: NewsModalProps) => {
   if (!news) return null;
 
-  const handleReadFull = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
+  const handleReadFull = () => {
     console.log('Read Full Article clicked, URL:', news.url);
     
     if (news.url && news.url.trim() !== '' && news.url !== '#') {
@@ -89,16 +86,13 @@ const NewsModal = ({ news, isOpen, onClose }: NewsModalProps) => {
               
               <div className="border-t pt-4">
                 {news.url && news.url !== '#' ? (
-                  <a
-                    href={news.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <button
                     onClick={handleReadFull}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors no-underline"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
                   >
                     Read Full Article
                     <ExternalLink className="w-4 h-4" />
-                  </a>
+                  </button>
                 ) : (
                   <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-400 text-white rounded-lg opacity-50 cursor-not-allowed">
                     Article URL Not Available
