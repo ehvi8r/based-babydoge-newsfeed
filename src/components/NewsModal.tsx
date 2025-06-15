@@ -1,3 +1,4 @@
+
 import {
   Dialog,
   DialogContent,
@@ -32,26 +33,15 @@ const NewsModal = ({ news, isOpen, onClose }: NewsModalProps) => {
   if (!news) return null;
 
   const handleReadFull = () => {
-    console.log('=== Read Full Article Debug Info ===');
-    console.log('news.url RAW:', news.url);
-    console.log('news.url (with delimiters): >' + news.url + '<');
-    console.log('news.url type:', typeof news.url);
-    console.log('news.url length:', news.url?.length);
-    console.log('news object:', news);
     const trimmedUrl = (news.url || '').trim();
-    console.log('news.url.trim(): >' + trimmedUrl + '<');
     if (
       trimmedUrl &&
       trimmedUrl !== '#' &&
       trimmedUrl.toLowerCase() !== 'undefined' &&
       trimmedUrl.toLowerCase() !== 'null' &&
-      trimmedUrl.toLowerCase() !== '' &&
       trimmedUrl.toLowerCase().indexOf('about:blank') === -1
     ) {
-      console.log('Opening URL:', trimmedUrl);
       window.open(trimmedUrl, '_blank', 'noopener,noreferrer');
-    } else {
-      console.error('No valid URL found for this article. URL value:', news.url);
     }
   };
 
@@ -64,12 +54,6 @@ const NewsModal = ({ news, isOpen, onClose }: NewsModalProps) => {
     news.url.toLowerCase() !== "null" &&
     news.url.startsWith("http")
   );
-
-  console.log('Article URL check:', {
-    url: news.url,
-    hasValidUrl,
-    title: news.title
-  });
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -119,13 +103,28 @@ const NewsModal = ({ news, isOpen, onClose }: NewsModalProps) => {
               
               <div className="border-t pt-4">
                 {hasValidUrl ? (
-                  <button
-                    onClick={handleReadFull}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-                  >
-                    Read Full Article
-                    <ExternalLink className="w-4 h-4" />
-                  </button>
+                  <>
+                    <button
+                      onClick={handleReadFull}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                    >
+                      Read Full Article
+                      <ExternalLink className="w-4 h-4" />
+                    </button>
+                    {/* Visible debug: show the article's link as text */}
+                    <div className="mt-2 text-xs break-all font-mono bg-gray-100 text-gray-800 px-2 py-2 rounded">
+                      URL to be opened: 
+                      <a
+                        href={news.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ wordBreak: "break-word" }}
+                        className="ml-1 underline text-blue-600"
+                      >
+                        {news.url}
+                      </a>
+                    </div>
+                  </>
                 ) : (
                   <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-400 text-white rounded-lg opacity-50 cursor-not-allowed">
                     Article URL Not Available
@@ -145,3 +144,4 @@ const NewsModal = ({ news, isOpen, onClose }: NewsModalProps) => {
 };
 
 export default NewsModal;
+
