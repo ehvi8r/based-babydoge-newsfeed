@@ -1,148 +1,131 @@
 
-import { SwapWidget } from '@uniswap/widgets';
-import { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react'
+import { SwapWidget } from '@uniswap/widgets'
+import '@uniswap/widgets/fonts.css'
+import '@uniswap/widgets/theme.css'
 
-const UniswapWidget = () => {
-  const [widgetError, setWidgetError] = useState<string | null>(null);
-  const [widgetKey, setWidgetKey] = useState(0);
-  const [isReady, setIsReady] = useState(false);
+declare global {
+  interface Window {
+    ethereum?: any
+  }
+}
 
-  console.log('UniswapWidget rendering...');
+type ChainOption = 'ethereum' | 'bnb' | 'base'
 
-  // Ensure BigInt and other globals are available with more comprehensive polyfill
+const CHAIN_CONFIG: Record<
+  ChainOption,
+  {
+    name: string
+    rpc: string
+    chainId: number
+    inputToken?: string
+    outputToken?: string
+  }
+> = {
+  ethereum: {
+    name: 'Ethereum',
+    rpc: 'https://rpc.ankr.com/eth', // from Chainlist.org
+    chainId: 1,
+    inputToken: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC
+    outputToken: 'ETH',
+  },
+  bnb: {
+    name: 'BNB Chain',
+    rpc: 'https://bsc-dataseed.binance.org/',
+    chainId: 56,
+    inputToken: '0x55d398326f99059fF775485246999027B3197955', // USDT
+    outputToken: '0xBB4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c', // WBNB
+  },
+  base: {
+    name: 'Base',
+    rpc: 'https://mainnet.base.org',
+    chainId: 8453,
+    inputToken: '0x4200000000000000000000000000000000000006', // ETH
+    outputToken: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', // USDC (assumed bridged)
+  },
+}
+
+const getChainById = (chainId: number): ChainOption | null => {
+  return (
+    (Object.entries(CHAIN_CONFIG).find(
+      ([, config]) => config.chainId === chainId
+    )?.[0] as ChainOption) || null
+  )
+}
+
+const UniswapWidget: React.FC = () => {
+  const [selectedChain, setSelectedChain] = useState<ChainOption>('base')
+
+  // Detect connected wallet chain
   useEffect(() => {
-    // More aggressive BigInt polyfill
-    try {
-      if (typeof BigInt === 'undefined') {
-        console.error('BigInt is not available in this environment');
-        setWidgetError('BigInt not supported in this browser');
-        return;
-      }
-
-      // Ensure BigInt is available globally in multiple contexts
-      if (typeof window !== 'undefined') {
-        (window as any).BigInt = BigInt;
-        if (!(window as any).global) {
-          (window as any).global = window;
+    const detectChain = async () => {
+      if (typeof window !== 'undefined' && window.ethereum) {
+        try {
+          const chainIdHex = await window.ethereum.request({ method: 'eth_chainId' })
+          const chainId = parseInt(chainIdHex, 16)
+          const detected = getChainById(chainId)
+          if (detected) setSelectedChain(detected)
+        } catch (err) {
+          console.error('Could not get wallet chain:', err)
         }
       }
-      
-      if (typeof globalThis !== 'undefined') {
-        (globalThis as any).BigInt = BigInt;
-      }
-      
-      // Also set it on global if it exists
-      if (typeof global !== 'undefined') {
-        (global as any).BigInt = BigInt;
-      }
-
-      console.log('BigInt setup complete:', typeof BigInt);
-      
-      // Give it a moment to settle before rendering the widget
-      setTimeout(() => setIsReady(true), 200);
-    } catch (error) {
-      console.error('Error setting up BigInt:', error);
-      setWidgetError('Failed to initialize BigInt support');
     }
-  }, []);
 
-  const theme = {
-    primary: '#8989DE',
-    secondary: '#3A3935',
-    interactive: '#8989DE',
-    container: '#141413',
-    module: '#3A3935',
-    accent: '#8989DE',
-    outline: '#605F5B',
-    dialog: '#3A3935',
-    fontFamily: 'inherit',
-    borderRadius: {
-      button: 1.0,
-      container: 1.0,
-      large: 1.0,
-      medium: 1.0,
-      small: 1.0,
-      xsmall: 1.0,
-    },
-  };
+    detectChain()
 
-  // Correct USDC address for Ethereum mainnet
-  const ETH_USDC_ADDRESS = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"; // Correct USDC on Ethereum
-  const ETH_CHAIN_ID = 1; // Ethereum mainnet
+    // Optional: update on chain change
+    if (window.ethereum) {
+      const handleChainChanged = (chainIdHex: string) => {
+        const chainId = parseInt(chainIdHex, 16)
+        const detected = getChainById(chainId)
+        if (detected) setSelectedChain(detected)
+      }
 
-  console.log('Widget config:', {
-    chainId: ETH_CHAIN_ID,
-    outputToken: ETH_USDC_ADDRESS,
-    widgetKey,
-    isReady,
-    bigIntAvailable: typeof BigInt !== 'undefined'
-  });
+      window.ethereum.on('chainChanged', handleChainChanged)
 
-  if (!isReady) {
-    return (
-      <div className="glass-card p-6 rounded-lg animate-fade-in">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold">Trade Tokens</h2>
-        </div>
-        <div className="w-full p-4 text-center">
-          <p>Initializing trading widget...</p>
-        </div>
+      return () => {
+        window.ethereum.removeListener('chainChanged', handleChainChanged)
+      }
+    }
+  }, [])
+
+  const config = CHAIN_CONFIG[selectedChain]
+
+  return (
+    <div className="glass-card p-6 rounded-lg animate-fade-in">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-semibold">Trade Tokens</h2>
       </div>
-    );
-  }
-
-  if (widgetError) {
-    return (
-      <div className="glass-card p-6 rounded-lg animate-fade-in">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold">Trade Tokens</h2>
-        </div>
-        <div className="w-full p-4 bg-red-100 text-red-800 rounded">
-          <p>Widget Error: {widgetError}</p>
-          <button 
-            onClick={() => {
-              setWidgetError(null);
-              setWidgetKey(prev => prev + 1);
-              setIsReady(false);
-              setTimeout(() => setIsReady(true), 200);
-            }} 
-            className="mt-2 px-4 py-2 bg-red-600 text-white rounded"
+      <div className="w-full">
+        <div className="mb-4">
+          <label htmlFor="chain-select" className="block text-sm font-medium mb-2">
+            Select Chain:
+          </label>
+          <select
+            id="chain-select"
+            value={selectedChain}
+            onChange={(e) => setSelectedChain(e.target.value as ChainOption)}
+            className="w-full p-2 border border-secondary rounded-md bg-background text-foreground"
           >
-            Retry
-          </button>
+            {Object.entries(CHAIN_CONFIG).map(([key, value]) => (
+              <option key={key} value={key}>
+                {value.name}
+              </option>
+            ))}
+          </select>
         </div>
-      </div>
-    );
-  }
 
-  try {
-    return (
-      <div className="glass-card p-6 rounded-lg animate-fade-in">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold">Trade Tokens</h2>
-        </div>
-        <div className="w-full">
-          <SwapWidget
-            key={`widget-${widgetKey}`}
-            theme={theme}
-            tokenList="https://gateway.ipfs.io/ipns/tokens.uniswap.org"
-            width="100%"
-            defaultChainId={ETH_CHAIN_ID}
-            defaultInputTokenAddress="NATIVE"
-            defaultOutputTokenAddress={ETH_USDC_ADDRESS}
-            onError={(error) => {
-              console.error('Uniswap Widget Error:', error);
-              setWidgetError(error.message || 'Unknown widget error');
-            }}
-          />
-        </div>
+        <SwapWidget
+          jsonRpcEndpoint={config.rpc}
+          chainId={config.chainId}
+          defaultInputTokenAddress={config.inputToken}
+          defaultOutputTokenAddress={config.outputToken}
+          theme="dark"
+          width="100%"
+        />
       </div>
-    );
-  } catch (error) {
-    console.error('UniswapWidget render error:', error);
-    setWidgetError(error instanceof Error ? error.message : 'Render error');
-    return null;
-  }
-};
+    </div>
+  )
+}
 
-export default UniswapWidget;
+export default UniswapWidget
