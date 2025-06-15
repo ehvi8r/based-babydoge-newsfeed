@@ -31,8 +31,23 @@ interface NewsModalProps {
 const NewsModal = ({ news, isOpen, onClose }: NewsModalProps) => {
   if (!news) return null;
 
-  const handleReadFull = () => {
-    window.open(news.url, '_blank', 'noopener,noreferrer');
+  const handleReadFull = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    console.log('Read Full Article clicked, URL:', news.url);
+    
+    if (news.url && news.url.trim() !== '') {
+      try {
+        window.open(news.url, '_blank', 'noopener,noreferrer');
+      } catch (error) {
+        console.error('Error opening URL:', error);
+        // Fallback: try to open without the additional parameters
+        window.open(news.url, '_blank');
+      }
+    } else {
+      console.error('No valid URL found for this article');
+    }
   };
 
   return (
@@ -82,6 +97,7 @@ const NewsModal = ({ news, isOpen, onClose }: NewsModalProps) => {
                 <button
                   onClick={handleReadFull}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                  type="button"
                 >
                   Read Full Article
                   <ExternalLink className="w-4 h-4" />
