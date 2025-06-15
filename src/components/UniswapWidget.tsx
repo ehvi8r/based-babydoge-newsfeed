@@ -13,7 +13,10 @@ const UniswapWidget = () => {
     outline: '#605F5B',
     dialog: '#3A3935',
     fontFamily: 'inherit',
-    borderRadius: 1.0,
+    borderRadius: {
+      button: 1.0,
+      container: 1.0,
+    },
   };
 
   return (
