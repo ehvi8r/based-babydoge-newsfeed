@@ -1,77 +1,38 @@
 
 import React from "react";
 
-const links = [
-  {
-    href: "https://coinmarketcap.com//",
-    alt: "CMC",
-    src: "/images/cmc.png",
-  },
-  {
-    href: "https://dexscreener.com/",
-    alt: "DEXScreener",
-    src: "/images/DEXScreener.png",
-  },
-  {
-    href: "https://coingecko.com/",
-    alt: "Coingecko",
-    src: "/images/coingecko.png",
-  },
-  {
-    href: "https://coinscan.com/",
-    alt: "Coinscan",
-    src: "/images/coinscan.png",
-  },
-  {
-    href: "https://t.me/ttfbotbot",
-    alt: "TTFBot",
-    src: "/images/ttfbot.png",
-  },
-  {
-    href: "https://rugcheck.xyz/",
-    alt: "RugCheck",
-    src: "/images/rugcheck.png",
-  },
-  {
-    href: "https://robusnipe.io/",
-    alt: "RobuSnipe",
-    src: "/images/robusnipe.png",
-  },
-  {
-    href: "https://app.tweetscout.io/",
-    alt: "TweetScout",
-    src: "/images/tweetscout.png",
-  },
-  {
-    href: "https://birdeye.so/",
-    alt: "Birdeye",
-    src: "/images/birdeye.png",
-  },
-  {
-    href: "https://app.bubblemaps.io/",
-    alt: "BubbleMaps",
-    src: "/images/bubblemaps.png",
-  },
-];
-
 const ResourceLinksRow = () => (
   <div className="flex flex-wrap justify-center gap-4 py-6">
-    {links.map((link) => (
-      <a
-        key={link.alt}
-        href={link.href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="hover:scale-105 transform transition"
-      >
-        <img
-          src={link.src}
-          alt={link.alt}
-          className="h-14 w-auto drop-shadow rounded bg-white p-1"
-          style={{ maxWidth: "130px", maxHeight: "56px", objectFit: "contain" }}
-        />
-      </a>
-    ))}
+    <a href="https://coinmarketcap.com/" target="_blank" rel="noopener noreferrer">
+      <img alt="CMC" className="logo-2" src="/images/cmc.png" width={150} />
+    </a>
+    <a href="https://dexscreener.com/" target="_blank" rel="noopener noreferrer">
+      <img alt="DEXScreener" className="logo-2" src="/images/DEXScreener.png" width={150} />
+    </a>
+    <a href="https://coingecko.com/" target="_blank" rel="noopener noreferrer">
+      <img alt="Coingecko" className="logo-2" src="/images/coingecko.png" width={150} />
+    </a>
+    <a href="https://coinscan.com/" target="_blank" rel="noopener noreferrer">
+      <img alt="Coinscan" className="logo-2" src="/images/coinscan.png" width={150} />
+    </a>
+    <a href="https://t.me/ttfbotbot" target="_blank" rel="noopener noreferrer">
+      <img alt="TTFBot" className="logo-2" src="/images/ttfbot.png" width={150} />
+    </a>
+    <a href="https://rugcheck.xyz/" target="_blank" rel="noopener noreferrer">
+      <img alt="RugCheck" className="logo-2" src="/images/rugcheck.png" width={150} />
+    </a>
+    <a href="https://robusnipe.io/" target="_blank" rel="noopener noreferrer">
+      <img alt="RobuSnipe" className="logo-2" src="/images/robusnipe.png" width={150} />
+    </a>
+    <a href="https://app.tweetscout.io/" target="_blank" rel="noopener noreferrer">
+      <img alt="TweetScout" className="logo-2" src="/images/tweetscout.png" width={150} />
+    </a>
+    <a href="https://birdeye.so/" target="_blank" rel="noopener noreferrer">
+      <img alt="Birdeye" className="logo-2" src="/images/birdeye.png" width={150} />
+    </a>
+    <a href="https://app.bubblemaps.io/" target="_blank" rel="noopener noreferrer">
+      <img alt="BubbleMaps" className="logo-2" src="/images/bubblemaps.png" width={150} />
+    </a>
   </div>
 );
 
