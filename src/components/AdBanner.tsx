@@ -1,12 +1,21 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+const BANNER_IMAGE_KEY = "babydoge-ad-banner-image";
+
 const AdBanner = () => {
   const [visible, setVisible] = useState(true);
+  const [bannerUrl, setBannerUrl] = useState<string | null>(null);
 
-  if (!visible) return null;
+  useEffect(() => {
+    const stored = localStorage.getItem(BANNER_IMAGE_KEY);
+    if (stored) setBannerUrl(stored);
+    else setBannerUrl(null);
+  }, []);
+
+  if (!visible || !bannerUrl) return null;
 
   return (
     <div
@@ -16,17 +25,15 @@ const AdBanner = () => {
       )}
     >
       <div className="glass-card bg-black/80 text-white rounded-t-lg shadow-lg flex items-center max-w-lg w-full mx-2 mb-2 px-4 py-3 relative animate-fade-in border border-accent">
-        <span className="mr-3 font-medium">
-          🚀 Advertise here! Promote your crypto project with Based BabyDoge.
+        <img
+          src={bannerUrl}
+          alt="Sponsored Banner"
+          className="h-14 max-h-24 w-auto rounded object-contain max-w-[200px] mr-3 bg-white"
+          style={{ background: "white" }}
+        />
+        <span className="font-medium flex-1 truncate">
+          <span className="sr-only">Ad: </span>
         </span>
-        <a
-          href="https://babydoge20.com/calendar"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline underline-offset-2 ml-auto text-accent hover:text-white font-semibold"
-        >
-          View Content Calendar
-        </a>
         <button
           className="absolute top-1 right-2 p-1 hover:text-red-400"
           aria-label="Dismiss banner"
