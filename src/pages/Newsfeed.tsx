@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,16 +16,6 @@ const Newsfeed = () => {
   const { toast } = useToast();
   
   const { data: newsData, isLoading, error, refetch, isFetching } = useNewsData();
-
-  const handleNewsClick = (news: NewsItem) => {
-    setSelectedNews(news);
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedNews(null);
-  };
 
   const handleRefresh = async () => {
     try {
@@ -117,7 +106,6 @@ const Newsfeed = () => {
                     <NewsCard 
                       key={news.id} 
                       news={news} 
-                      onClick={handleNewsClick}
                     />
                   ))
                 ) : (

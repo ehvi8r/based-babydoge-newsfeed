@@ -1,4 +1,3 @@
-
 import {
   Dialog,
   DialogContent,
@@ -32,29 +31,7 @@ interface NewsModalProps {
 const NewsModal = ({ news, isOpen, onClose }: NewsModalProps) => {
   if (!news) return null;
 
-  const handleReadFull = () => {
-    const trimmedUrl = (news.url || '').trim();
-    if (
-      trimmedUrl &&
-      trimmedUrl !== '#' &&
-      trimmedUrl.toLowerCase() !== 'undefined' &&
-      trimmedUrl.toLowerCase() !== 'null' &&
-      trimmedUrl.toLowerCase().indexOf('about:blank') === -1
-    ) {
-      window.open(trimmedUrl, '_blank', 'noopener,noreferrer');
-    }
-  };
-
-  const hasValidUrl = !!(
-    news.url &&
-    typeof news.url === "string" &&
-    news.url.trim() !== "" &&
-    news.url !== "#" &&
-    news.url.toLowerCase() !== "undefined" &&
-    news.url.toLowerCase() !== "null" &&
-    news.url.startsWith("http")
-  );
-
+  // Hide: handleReadFull, hasValidUrl logic
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] p-0">
@@ -100,41 +77,10 @@ const NewsModal = ({ news, isOpen, onClose }: NewsModalProps) => {
               <div className="text-foreground whitespace-pre-line mb-6">
                 {news.content}
               </div>
-              
-              <div className="border-t pt-4">
-                {hasValidUrl ? (
-                  <>
-                    <button
-                      onClick={handleReadFull}
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-                    >
-                      Read Full Article
-                      <ExternalLink className="w-4 h-4" />
-                    </button>
-                    {/* Visible debug: show the article's link as text */}
-                    <div className="mt-2 text-xs break-all font-mono bg-gray-100 text-gray-800 px-2 py-2 rounded">
-                      URL to be opened: 
-                      <a
-                        href={news.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ wordBreak: "break-word" }}
-                        className="ml-1 underline text-blue-600"
-                      >
-                        {news.url}
-                      </a>
-                    </div>
-                  </>
-                ) : (
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-400 text-white rounded-lg opacity-50 cursor-not-allowed">
-                    Article URL Not Available
-                    <ExternalLink className="w-4 h-4" />
-                  </div>
-                )}
-                <p className="text-xs text-muted-foreground mt-2">
-                  Source: {news.source}
-                </p>
-              </div>
+              {/* Article link removed */}
+              <p className="text-xs text-muted-foreground mt-2">
+                Source: {news.source}
+              </p>
             </div>
           </div>
         </ScrollArea>
@@ -144,4 +90,3 @@ const NewsModal = ({ news, isOpen, onClose }: NewsModalProps) => {
 };
 
 export default NewsModal;
-
