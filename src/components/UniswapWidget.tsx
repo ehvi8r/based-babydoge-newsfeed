@@ -7,24 +7,11 @@ const UniswapWidget = () => {
 
   console.log('UniswapWidget rendering...');
 
-  // Add comprehensive BigInt polyfill and debugging
+  // Ensure BigInt is available globally
   useEffect(() => {
-    console.log('Checking BigInt support...');
-    console.log('typeof BigInt:', typeof BigInt);
-    console.log('BigInt available:', typeof BigInt !== 'undefined');
-    
-    // Ensure BigInt is available globally
-    if (typeof window !== 'undefined') {
-      if (typeof window.BigInt === 'undefined' && typeof BigInt !== 'undefined') {
-        (window as any).BigInt = BigInt;
-        console.log('Added BigInt to window');
-      }
-      
-      // Also ensure it's available on globalThis
-      if (typeof (globalThis as any).BigInt === 'undefined' && typeof BigInt !== 'undefined') {
-        (globalThis as any).BigInt = BigInt;
-        console.log('Added BigInt to globalThis');
-      }
+    if (typeof window !== 'undefined' && typeof BigInt !== 'undefined') {
+      (window as any).BigInt = BigInt;
+      (globalThis as any).BigInt = BigInt;
     }
   }, []);
 
@@ -48,13 +35,6 @@ const UniswapWidget = () => {
     },
   };
 
-  useEffect(() => {
-    console.log('UniswapWidget mounted');
-    return () => {
-      console.log('UniswapWidget unmounting');
-    };
-  }, []);
-
   if (widgetError) {
     return (
       <div className="glass-card p-6 rounded-lg animate-fade-in">
@@ -75,7 +55,6 @@ const UniswapWidget = () => {
   }
 
   try {
-    console.log('Attempting to render SwapWidget...');
     return (
       <div className="glass-card p-6 rounded-lg animate-fade-in">
         <div className="flex items-center justify-between mb-6">
