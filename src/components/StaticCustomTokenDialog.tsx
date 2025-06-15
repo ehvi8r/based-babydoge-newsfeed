@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button";
 const StaticCustomTokenDialog: React.FC = () => {
   // UI-only form; no handlers, just design mimic
   return (
-    <div className="w-full max-w-lg mx-auto mb-6 p-4 border border-muted rounded-lg bg-background shadow glass-card animate-fade-in">
+    <div className="glass-card w-full p-6 rounded-lg border border-muted bg-background shadow animate-fade-in">
       <h3 className="text-lg font-semibold mb-4 text-center">Select Custom Token</h3>
-      <form className="space-y-4">
+      <form className="space-y-4 max-w-2xl mx-auto">
         <div>
           <label className="block mb-1 text-sm font-medium" htmlFor="chain-static">Chain</label>
           <Select defaultValue="ETH">
@@ -51,3 +51,4 @@ const StaticCustomTokenDialog: React.FC = () => {
 };
 
 export default StaticCustomTokenDialog;
+

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import MarketStats from "@/components/MarketStats";
 import CryptoChart from "@/components/CryptoChart";
@@ -9,6 +10,7 @@ import AnnouncementBanner from "@/components/AnnouncementBanner";
 import UniswapWidget from "@/components/UniswapWidget";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import ResourceLinksRow from "@/components/ResourceLinksRow";
+import StaticCustomTokenDialog from "@/components/StaticCustomTokenDialog";
 
 const Dashboard = () => {
   console.log("Rendering Dashboard");
@@ -48,7 +50,11 @@ const Dashboard = () => {
             <MarketStats />
           </ErrorBoundary>
 
-          {/* Bitcoin Price - Full width */}
+          {/* NEW: Custom Token Dialog as full-width separate card */}
+          <div className="mb-8">
+            <StaticCustomTokenDialog />
+          </div>
+
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8 mb-0">
             <div className="col-span-1 xl:col-span-3">
               <ErrorBoundary>
@@ -115,3 +121,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
