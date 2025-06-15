@@ -1,6 +1,5 @@
 
 import React from "react";
-import CryptoImage from "@/components/CryptoImage";
 
 const links = [
   {
@@ -65,11 +64,11 @@ const ResourceLinksRow = () => (
         rel="noopener noreferrer"
         className="hover:scale-105 transform transition"
       >
-        <CryptoImage
-          alt={link.alt}
+        <img
           src={link.src}
-          className="logo-2 h-14 w-auto drop-shadow rounded bg-white p-1"
-          fallbackText={link.alt.charAt(0)}
+          alt={link.alt}
+          className="h-14 w-auto drop-shadow rounded bg-white p-1"
+          style={{ maxWidth: "130px", maxHeight: "56px", objectFit: "contain" }}
         />
       </a>
     ))}
