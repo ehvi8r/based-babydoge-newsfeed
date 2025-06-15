@@ -1,0 +1,68 @@
+
+/* theme.css - Customizable Uniswap Widget Theme */
+
+/* Root style overrides */
+:root {
+  --uniswap-accent-color: #2172e5;
+  --uniswap-background-color: #0d111c;
+  --uniswap-foreground-color: #ffffff;
+  --uniswap-border-radius: 12px;
+  --uniswap-font-family: 'Inter', sans-serif;
+  --uniswap-button-background: #2172e5;
+  --uniswap-button-hover: #1a5bcc;
+  --uniswap-input-background: #1e2430;
+  --uniswap-input-border: #2c2f36;
+  --uniswap-input-color: #ffffff;
+}
+
+/* Override base widget container */
+.uniswap-widget {
+  background-color: var(--uniswap-background-color);
+  color: var(--uniswap-foreground-color);
+  font-family: var(--uniswap-font-family);
+  border-radius: var(--uniswap-border-radius);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Button styles */
+.uniswap-widget button {
+  background-color: var(--uniswap-button-background);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.uniswap-widget button:hover {
+  background-color: var(--uniswap-button-hover);
+}
+
+/* Input styles */
+.uniswap-widget input {
+  background-color: var(--uniswap-input-background);
+  border: 1px solid var(--uniswap-input-border);
+  color: var(--uniswap-input-color);
+  border-radius: 6px;
+  padding: 8px;
+}
+
+/* Dropdown styles */
+.uniswap-widget select {
+  background-color: var(--uniswap-input-background);
+  border: 1px solid var(--uniswap-input-border);
+  color: var(--uniswap-input-color);
+  border-radius: 6px;
+  padding: 6px;
+}
+
+/* Link styles */
+.uniswap-widget a {
+  color: var(--uniswap-accent-color);
+  text-decoration: none;
+}
+
+.uniswap-widget a:hover {
+  text-decoration: underline;
+}

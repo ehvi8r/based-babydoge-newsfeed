@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { SwapWidget } from '@uniswap/widgets'
-import '@uniswap/widgets/fonts.css'
-import '@uniswap/widgets/theme.css'
-import '../styles/uniswap-theme.css'
+import './assets/theme.css'
+import './assets/fonts.css'
 
 declare global {
   interface Window {
@@ -137,8 +136,10 @@ const UniswapWidget: React.FC = () => {
         </div>
 
         <SwapWidget
-          jsonRpcEndpoint={config.rpc}
-          chainId={config.chainId}
+          provider={window.ethereum}
+          jsonRpcUrlMap={{
+            [config.chainId]: [config.rpc]
+          }}
           defaultInputTokenAddress={config.inputToken}
           defaultOutputTokenAddress={config.outputToken}
           theme={darkTheme}
