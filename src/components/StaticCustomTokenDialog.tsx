@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
@@ -34,7 +33,6 @@ const StaticCustomTokenDialog: React.FC = () => {
             <Input 
               id="symbol-static"
               placeholder="e.g. PEPE"
-              disabled
               style={{ width: "25ch" }}
             />
           </div>
@@ -46,7 +44,6 @@ const StaticCustomTokenDialog: React.FC = () => {
             <Input 
               id="address-static"
               placeholder="Enter contract address"
-              disabled
               style={{ width: "45ch" }}
             />
           </div>
