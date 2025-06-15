@@ -47,19 +47,25 @@ const Dashboard = () => {
           <ErrorBoundary>
             <MarketStats />
           </ErrorBoundary>
-          
+
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8 mb-8">
             <div className="xl:col-span-2 space-y-6">
               <ErrorBoundary>
                 <CryptoChart symbol={selectedCurrency.symbol} name={selectedCurrency.name} />
               </ErrorBoundary>
-              <ErrorBoundary>
-                <UniswapWidget />
-              </ErrorBoundary>
             </div>
             <div>
               <ErrorBoundary>
                 <PortfolioCard />
+              </ErrorBoundary>
+            </div>
+          </div>
+
+          {/* Trade Tokens widget - full width and centered */}
+          <div className="flex justify-center w-full mb-8">
+            <div className="w-full max-w-3xl">
+              <ErrorBoundary>
+                <UniswapWidget />
               </ErrorBoundary>
             </div>
           </div>
