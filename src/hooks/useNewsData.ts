@@ -107,6 +107,11 @@ const generateUniqueNews = (): NewsItem[] => {
   const sources = ['CoinDesk', 'CoinTelegraph', 'Decrypt', 'The Block', 'CryptoPanic', 'CoinGecko', 'Blockworks', 'CryptoSlate', 'BeInCrypto', 'CryptoNews'];
 
   return uniqueStories.map((story, index) => {
+    // Make sure every URL is a string starting with http or https; fallback to CoinDesk if missing
+    let articleUrl = typeof story.url === "string" && story.url.startsWith("http")
+      ? story.url
+      : "https://www.coindesk.com/";
+
     const newsItem = {
       id: `unique-${index + 1}`,
       title: story.title,
@@ -117,9 +122,16 @@ const generateUniqueNews = (): NewsItem[] => {
       imageUrl: `https://picsum.photos/400/300?random=${index + 50}`,
       content: `This comprehensive analysis explores ${story.title.toLowerCase()}. ${story.summary} Industry experts are closely monitoring these developments as they represent significant shifts in the cryptocurrency landscape. Market analysts believe this trend will have lasting impacts on digital asset adoption and blockchain technology implementation. The implications for both retail and institutional investors continue to unfold as the market matures.`,
       source: sources[index % sources.length],
-      url: story.url
+      url: articleUrl, // Always valid url
     };
-    console.log(`Generated news item ${index + 1}:`, { title: newsItem.title, url: newsItem.url });
+    if (!newsItem.url || newsItem.url === "#" || newsItem.url === "" || newsItem.url === "undefined") {
+      console.error(
+        "DEBUG: Invalid URL detected in generated news:",
+        newsItem.title,
+        newsItem.url
+      );
+      newsItem.url = "https://www.coindesk.com/";
+    }
     return newsItem;
   });
 };
@@ -195,13 +207,39 @@ const fetchCryptoNews = async (): Promise<NewsItem[]> => {
     newsItems.push(...filteredGeneratedNews.slice(0, remainingSlots));
   }
 
-  // Log all URLs to debug
-  console.log('Final news items URLs:', newsItems.map(item => ({ title: item.title, url: item.url })));
+  // Guarantee every news item has a valid, real url
+  const cleanedNewsItems = newsItems
+    .slice(0, 30)
+    .map((item, idx) => {
+      let finalUrl =
+        typeof item.url === "string" && item.url.startsWith("http")
+          ? item.url
+          : "https://www.coindesk.com/";
+      if (
+        !finalUrl ||
+        finalUrl === "#" ||
+        finalUrl === "" ||
+        finalUrl === "undefined"
+      ) {
+        console.error(
+          "DEBUG: Fixing invalid NewsItem url before final return:",
+          item.title,
+          item.url
+        );
+        finalUrl = "https://www.coindesk.com/";
+      }
+      return { ...item, url: finalUrl };
+    });
 
-  const uniqueNewsItems = newsItems.slice(0, 30);
-  console.log(`Total unique news items: ${uniqueNewsItems.length}`);
+  // Log all URLs to make debugging easier
+  console.log(
+    "Final news items (title + url):",
+    cleanedNewsItems.map((item) => ({ title: item.title, url: item.url }))
+  );
+
+  console.log(`Total unique news items: ${cleanedNewsItems.length}`);
   
-  return uniqueNewsItems;
+  return cleanedNewsItems;
 };
 
 export const useNewsData = () => {
