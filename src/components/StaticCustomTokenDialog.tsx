@@ -11,13 +11,13 @@ const StaticCustomTokenDialog: React.FC = () => {
       <h3 className="text-lg font-semibold mb-4 text-center">Select Custom Token</h3>
       <form className="space-y-4 max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end md:space-x-4 gap-2">
-          {/* Chain */}
-          <div className="flex-1 min-w-0">
+          {/* Chain (15ch) */}
+          <div className="flex-1 min-w-0" style={{ maxWidth: "15ch" }}>
             <label className="block mb-1 text-sm font-medium" htmlFor="chain-static">
               Chain
             </label>
             <Select defaultValue="ETH">
-              <SelectTrigger id="chain-static">
+              <SelectTrigger id="chain-static" className="w-full">
                 <SelectValue placeholder="Select Chain" />
               </SelectTrigger>
               <SelectContent>
@@ -26,8 +26,8 @@ const StaticCustomTokenDialog: React.FC = () => {
               </SelectContent>
             </Select>
           </div>
-          {/* Token Symbol (optional) */}
-          <div className="flex-1 min-w-0">
+          {/* Token Symbol (10ch) */}
+          <div className="flex-1 min-w-0" style={{ maxWidth: "10ch" }}>
             <label className="block mb-1 text-sm font-medium" htmlFor="symbol-static">
               Token Symbol <span className="text-muted-foreground">(optional)</span>
             </label>
@@ -35,10 +35,11 @@ const StaticCustomTokenDialog: React.FC = () => {
               id="symbol-static"
               placeholder="e.g. PEPE"
               disabled
+              style={{ width: "10ch" }}
             />
           </div>
-          {/* Contract Address * */}
-          <div className="flex-1 min-w-0">
+          {/* Contract Address * (45ch) */}
+          <div className="flex-1 min-w-0" style={{ maxWidth: "45ch" }}>
             <label className="block mb-1 text-sm font-medium" htmlFor="address-static">
               Contract Address <span className="text-destructive">*</span>
             </label>
@@ -46,6 +47,7 @@ const StaticCustomTokenDialog: React.FC = () => {
               id="address-static"
               placeholder="Enter contract address"
               disabled
+              style={{ width: "45ch" }}
             />
           </div>
         </div>
@@ -58,4 +60,3 @@ const StaticCustomTokenDialog: React.FC = () => {
 };
 
 export default StaticCustomTokenDialog;
-
