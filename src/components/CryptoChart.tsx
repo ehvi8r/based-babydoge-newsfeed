@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import TradingViewWidget from "react-tradingview-widget";
 import ChainTokenSelector from "./ChainTokenSelector";
@@ -64,7 +65,6 @@ const CryptoChart = ({
   symbol = "BINANCE:BTCUSDT",
   name = "Bitcoin",
 }: CryptoChartProps) => {
-  // Custom selector state (null = no override, use dashboard)
   const [customChart, setCustomChart] = useState<{
     chain: "ethereum" | "base";
     symbol: string;
@@ -77,7 +77,6 @@ const CryptoChart = ({
     sym: string,
     addr: string
   ) => {
-    // Nothing entered: don't override chart, stay on dashboard selection.
     if (!sym && !addr) {
       setCustomChart(null);
       return;
@@ -93,7 +92,7 @@ const CryptoChart = ({
 
   // Choose which chart to display
   let chartSymbol: string = symbol || "BINANCE:BTCUSDT";
-  let chartTitle: string = name ? `${name} Price Chart` : "Price Chart";
+  let chartTitle: string;
 
   if (customChart && (customChart.symbol || customChart.address)) {
     chartSymbol = generateTradingViewSymbol(
@@ -102,14 +101,33 @@ const CryptoChart = ({
       customChart.address
     );
 
-    if (customChart.symbol) chartTitle = `${customChart.symbol.toUpperCase()} Price Chart`;
-    else if (customChart.address) chartTitle = `Token (by Contract) Price Chart`;
-    else chartTitle = "Price Chart";
+    // Only want the "pair" title if symbol is present
+    if (customChart && customChart.symbol) {
+      if (customChart.chain === "base") {
+        chartTitle = `Base ETH: ${customChart.symbol.toUpperCase()}`;
+      } else if (customChart.chain === "ethereum") {
+        chartTitle = `ETH: ${customChart.symbol.toUpperCase()}`;
+      } else {
+        chartTitle = `${customChart.symbol.toUpperCase()} Price Chart`;
+      }
+    } else if (customChart && customChart.address) {
+      chartTitle = `Token (by Contract) Price Chart`;
+    } else {
+      chartTitle = "Price Chart";
+    }
+  } else {
+    // Fallback to incoming props
+    if (symbol && name && symbol.startsWith("BINANCE:")) {
+      // Attempt to show "ETH: BTC" etc for ETH/BTC
+      if (symbol.endsWith("USDT")) chartTitle = `ETH: ${symbol.replace("BINANCE:", "").replace("USDT", "")}`;
+      else chartTitle = `${name} Price Chart`;
+    } else {
+      chartTitle = name ? `${name} Price Chart` : "Price Chart";
+    }
   }
 
   return (
     <div className="glass-card p-6 rounded-lg mb-8 animate-fade-in">
-      {/* Token Selector - only overrides the chart if Show pressed */}
       <ChainTokenSelector
         onApply={handleApply}
         onClear={handleClear}
