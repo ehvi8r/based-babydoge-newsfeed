@@ -11,6 +11,7 @@ import UniswapWidget from "@/components/UniswapWidget";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
 const Dashboard = () => {
+  console.log("Rendering Dashboard");
   const [selectedCurrency, setSelectedCurrency] = useState({
     symbol: "BINANCE:BTCUSDT",
     name: "Bitcoin"

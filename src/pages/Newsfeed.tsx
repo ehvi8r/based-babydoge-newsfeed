@@ -11,6 +11,7 @@ import { useNewsData, NewsItem } from "@/hooks/useNewsData";
 import { useToast } from "@/hooks/use-toast";
 
 const Newsfeed = () => {
+  console.log("Rendering Newsfeed");
   const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { toast } = useToast();
