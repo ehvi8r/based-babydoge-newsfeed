@@ -36,7 +36,7 @@ const CHAIN_LABELS: Record<ChainOption, string> = {
 };
 
 const ChainTokenSelector: React.FC<ChainTokenSelectorProps> = ({
-  initialChain = "base", // changed default to base
+  initialChain = "base",
   initialSymbol = "",
   initialAddress = "",
   onApply,
@@ -48,6 +48,10 @@ const ChainTokenSelector: React.FC<ChainTokenSelectorProps> = ({
   const [touched, setTouched] = useState<{ symbol: boolean; address: boolean }>({ symbol: false, address: false });
   const [tokenOptions, setTokenOptions] = useState<any[]>([]);
   const [loadingTokens, setLoadingTokens] = useState(false);
+
+  // Pair label helper
+  const chainPairPrefix = chain === "base" ? "Base ETH" : "ETH";
+  const showPairLabel = !!symbol && symbol.trim() !== "";
 
   // Basic ETH contract validation
   function isValidEthAddress(address: string) {
@@ -144,6 +148,11 @@ const ChainTokenSelector: React.FC<ChainTokenSelectorProps> = ({
           className="min-w-[120px]"
           autoComplete="off"
         />
+        {showPairLabel && (
+          <div className="text-xs text-zinc-200 mt-1 italic" data-testid="pair-label">
+            {chainPairPrefix}: {symbol.trim().toUpperCase()}
+          </div>
+        )}
       </div>
       <div>
         <label className="block text-xs font-semibold mb-1" htmlFor="address-input">
