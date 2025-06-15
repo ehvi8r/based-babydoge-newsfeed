@@ -148,7 +148,3 @@ const UniswapWidget: React.FC = () => {
 }
 
 export default UniswapWidget
-
-}
-
-export default UniswapWidget
