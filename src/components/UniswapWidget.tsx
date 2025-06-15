@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { SwapWidget } from '@uniswap/widgets'
 import { ethers } from 'ethers'
-import '@uniswap/widgets/fonts.css' // Still needed for widget fonts
 import './assets/theme.css'
 import './assets/fonts.css'
 
