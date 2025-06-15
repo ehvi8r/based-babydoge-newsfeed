@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -7,7 +8,7 @@ import NewsCard from "@/components/NewsCard";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { useNewsData, NewsItem } from "@/hooks/useNewsData";
 import { useToast } from "@/hooks/use-toast";
-import BannerSettings from "@/components/BannerSettings";
+// BannerSettings import removed
 
 const Newsfeed = () => {
   console.log("Rendering Newsfeed");
@@ -53,9 +54,7 @@ const Newsfeed = () => {
 
   return (
     <>
-      {/* Banner Ad settings - remove or move wherever you like */}
-      <BannerSettings />
-      {/* ... keep existing JSX for Newsfeed ... */}
+      {/* Banner Ad settings removed */}
       <div className="p-4 sm:p-6 lg:p-8">
         <div className="max-w-7xl mx-auto">
           <header className="mb-8">
