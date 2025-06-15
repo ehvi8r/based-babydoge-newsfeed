@@ -26,8 +26,8 @@ const StaticCustomTokenDialog: React.FC = () => {
               </SelectContent>
             </Select>
           </div>
-          {/* Token Symbol (10ch) */}
-          <div className="flex-1 min-w-0" style={{ maxWidth: "10ch" }}>
+          {/* Token Symbol (25ch) */}
+          <div className="flex-1 min-w-0" style={{ maxWidth: "25ch" }}>
             <label className="block mb-1 text-sm font-medium" htmlFor="symbol-static">
               Token Symbol <span className="text-muted-foreground">(optional)</span>
             </label>
@@ -35,7 +35,7 @@ const StaticCustomTokenDialog: React.FC = () => {
               id="symbol-static"
               placeholder="e.g. PEPE"
               disabled
-              style={{ width: "10ch" }}
+              style={{ width: "25ch" }}
             />
           </div>
           {/* Contract Address * (45ch) */}
