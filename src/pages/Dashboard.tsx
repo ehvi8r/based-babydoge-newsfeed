@@ -39,22 +39,27 @@ const Dashboard = () => {
               Welcome back to your cryptocurrency portfolio
             </p>
           </header>
-          
+
           <ErrorBoundary>
             <AnnouncementBanner />
           </ErrorBoundary>
-          
+
           <ErrorBoundary>
             <MarketStats />
           </ErrorBoundary>
 
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8 mb-8">
-            <div className="xl:col-span-2 space-y-6">
+          {/* Bitcoin Price - CryptoChart: full width, centered */}
+          <div className="flex justify-center w-full mb-8">
+            <div className="w-full max-w-3xl">
               <ErrorBoundary>
                 <CryptoChart symbol={selectedCurrency.symbol} name={selectedCurrency.name} />
               </ErrorBoundary>
             </div>
-            <div>
+          </div>
+
+          {/* Bitcoin Performance - PortfolioCard: full width, centered, below CryptoChart */}
+          <div className="flex justify-center w-full mb-8">
+            <div className="w-full max-w-3xl">
               <ErrorBoundary>
                 <PortfolioCard />
               </ErrorBoundary>
@@ -69,7 +74,7 @@ const Dashboard = () => {
               </ErrorBoundary>
             </div>
           </div>
-          
+
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8 mb-8">
             <ErrorBoundary>
               <CryptoList onCurrencySelect={handleCurrencySelect} />
