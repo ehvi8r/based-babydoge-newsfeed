@@ -39,7 +39,7 @@ const StaticCustomTokenDialog: React.FC = () => {
           {/* Contract Address * (45ch) */}
           <div className="flex-1 min-w-0" style={{ maxWidth: "45ch" }}>
             <label className="block mb-1 text-sm font-medium" htmlFor="address-static">
-              Contract Address <span className="text-destructive">*</span>
+              Contract Address <span className="text-destructive">*(required)</span>
             </label>
             <Input 
               id="address-static"
