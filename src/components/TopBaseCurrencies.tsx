@@ -1,4 +1,3 @@
-
 import { ArrowUpIcon, ArrowDownIcon, AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchWithCache } from "@/utils/apiUtils";
@@ -17,6 +16,14 @@ interface BaseCurrency {
   market_cap: number;
   price_change_percentage_24h: number;
 }
+
+const TOKEN_SYMBOL_OVERRIDES: Record<string, string> = {
+  // coin id: correct TradingView symbol (all use COINBASE symbol convention)
+  "usd-coin": "COINBASE:USDCUSDC",           // USDC
+  "based-brett": "COINBASE:BRETTUSDC",       // Brett
+  "basenji": "COINBASE:BENJIUSDC",           // Basenji
+  "higher": "COINBASE:HIGHERUSDC",           // Higher
+};
 
 const fetchTopBaseCurrencies = async (): Promise<BaseCurrency[]> => {
   try {
@@ -68,7 +75,12 @@ const TopBaseCurrencies = ({ onCurrencySelect }: TopBaseCurrenciesProps) => {
   });
 
   const handleRowClick = (currency: BaseCurrency) => {
-    const tradingViewSymbol = `COINBASE:${currency.symbol.toUpperCase()}USDC`;
+    let tradingViewSymbol;
+    if (TOKEN_SYMBOL_OVERRIDES[currency.id]) {
+      tradingViewSymbol = TOKEN_SYMBOL_OVERRIDES[currency.id];
+    } else {
+      tradingViewSymbol = `COINBASE:${currency.symbol.toUpperCase()}USDC`;
+    }
     onCurrencySelect(tradingViewSymbol, currency.name);
   };
 
