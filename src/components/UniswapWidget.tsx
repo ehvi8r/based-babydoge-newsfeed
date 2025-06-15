@@ -1,7 +1,12 @@
 
 import { SwapWidget } from '@uniswap/widgets';
+import { useState, useEffect } from 'react';
 
 const UniswapWidget = () => {
+  const [widgetError, setWidgetError] = useState<string | null>(null);
+
+  console.log('UniswapWidget rendering...');
+
   const theme = {
     primary: '#8989DE',
     secondary: '#3A3935',
@@ -22,23 +27,59 @@ const UniswapWidget = () => {
     },
   };
 
-  return (
-    <div className="glass-card p-6 rounded-lg animate-fade-in">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold">Trade Tokens</h2>
+  useEffect(() => {
+    console.log('UniswapWidget mounted');
+    return () => {
+      console.log('UniswapWidget unmounting');
+    };
+  }, []);
+
+  if (widgetError) {
+    return (
+      <div className="glass-card p-6 rounded-lg animate-fade-in">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-semibold">Trade Tokens</h2>
+        </div>
+        <div className="w-full p-4 bg-red-100 text-red-800 rounded">
+          <p>Widget Error: {widgetError}</p>
+          <button 
+            onClick={() => setWidgetError(null)} 
+            className="mt-2 px-4 py-2 bg-red-600 text-white rounded"
+          >
+            Retry
+          </button>
+        </div>
       </div>
-      <div className="w-full">
-        <SwapWidget
-          theme={theme}
-          tokenList="https://gateway.ipfs.io/ipns/tokens.uniswap.org"
-          width="100%"
-          defaultChainId={8453}
-          defaultInputTokenAddress="NATIVE"
-          defaultOutputTokenAddress="0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
-        />
+    );
+  }
+
+  try {
+    return (
+      <div className="glass-card p-6 rounded-lg animate-fade-in">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-semibold">Trade Tokens</h2>
+        </div>
+        <div className="w-full">
+          <SwapWidget
+            theme={theme}
+            tokenList="https://gateway.ipfs.io/ipns/tokens.uniswap.org"
+            width="100%"
+            defaultChainId={8453}
+            defaultInputTokenAddress="NATIVE"
+            defaultOutputTokenAddress="0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+            onError={(error) => {
+              console.error('Uniswap Widget Error:', error);
+              setWidgetError(error.message || 'Unknown widget error');
+            }}
+          />
+        </div>
       </div>
-    </div>
-  );
+    );
+  } catch (error) {
+    console.error('UniswapWidget render error:', error);
+    setWidgetError(error instanceof Error ? error.message : 'Render error');
+    return null;
+  }
 };
 
 export default UniswapWidget;
