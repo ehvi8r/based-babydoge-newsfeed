@@ -1,4 +1,3 @@
-
 import { useQuery } from '@tanstack/react-query';
 
 export interface NewsItem {
@@ -108,8 +107,7 @@ const generateUniqueNews = (): NewsItem[] => {
   const sources = ['CoinDesk', 'CoinTelegraph', 'Decrypt', 'The Block', 'CryptoPanic', 'CoinGecko', 'Blockworks', 'CryptoSlate', 'BeInCrypto', 'CryptoNews'];
 
   return uniqueStories.map((story, index) => {
-    console.log(`Generating story ${index + 1} with URL:`, story.url);
-    return {
+    const newsItem = {
       id: `unique-${index + 1}`,
       title: story.title,
       summary: story.summary,
@@ -119,8 +117,10 @@ const generateUniqueNews = (): NewsItem[] => {
       imageUrl: `https://picsum.photos/400/300?random=${index + 50}`,
       content: `This comprehensive analysis explores ${story.title.toLowerCase()}. ${story.summary} Industry experts are closely monitoring these developments as they represent significant shifts in the cryptocurrency landscape. Market analysts believe this trend will have lasting impacts on digital asset adoption and blockchain technology implementation. The implications for both retail and institutional investors continue to unfold as the market matures.`,
       source: sources[index % sources.length],
-      url: story.url // Make sure the URL is preserved here
+      url: story.url
     };
+    console.log(`Generated news item ${index + 1}:`, { title: newsItem.title, url: newsItem.url });
+    return newsItem;
   });
 };
 
