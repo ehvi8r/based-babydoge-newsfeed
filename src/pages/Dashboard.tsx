@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import MarketStats from "@/components/MarketStats";
 import CryptoChart from "@/components/CryptoChart";
@@ -9,6 +8,7 @@ import BaseCurrencies from "@/components/BaseCurrencies";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
 import UniswapWidget from "@/components/UniswapWidget";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import ResourceLinksRow from "@/components/ResourceLinksRow";
 
 const Dashboard = () => {
   console.log("Rendering Dashboard");
@@ -48,13 +48,24 @@ const Dashboard = () => {
             <MarketStats />
           </ErrorBoundary>
 
-          {/* Bitcoin Price and Performance - Full width, stacked */}
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8 mb-8">
+          {/* Bitcoin Price - Full width */}
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8 mb-0">
             <div className="col-span-1 xl:col-span-3">
               <ErrorBoundary>
                 <CryptoChart symbol={selectedCurrency.symbol} name={selectedCurrency.name} />
               </ErrorBoundary>
             </div>
+          </div>
+
+          {/* Resource Links */}
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8">
+            <div className="col-span-1 xl:col-span-3">
+              <ResourceLinksRow />
+            </div>
+          </div>
+
+          {/* Bitcoin Performance - Full width */}
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8 mb-8">
             <div className="col-span-1 xl:col-span-3">
               <ErrorBoundary>
                 <PortfolioCard />
