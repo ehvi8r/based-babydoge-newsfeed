@@ -47,7 +47,7 @@ const sourceHomepageMap: Record<string, string> = {
   "Decrypt": "https://decrypt.co/",
   "The Block": "https://www.theblock.co/",
   "CryptoPanic": "https://cryptopanic.com/",
-  "CoinGecko": "https://www.coingecko.com/",
+  "CoinGecko": "https://www.coingecko.com/news/", // <-- updated to /news/
   "Blockworks": "https://blockworks.co/",
   "CryptoSlate": "https://cryptoslate.com/",
   "BeInCrypto": "https://beincrypto.com/",
