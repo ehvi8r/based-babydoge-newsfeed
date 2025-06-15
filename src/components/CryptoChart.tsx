@@ -10,7 +10,7 @@ const CryptoChart = ({ symbol = "BINANCE:BTCUSDT", name = "Bitcoin" }: CryptoCha
   return (
     <div className="glass-card p-6 rounded-lg mb-8 animate-fade-in">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold">{name} Price</h2>
+        <h2 className="text-xl font-semibold">Price Chart</h2>
       </div>
       <div className="h-[400px] w-full">
         <TradingViewWidget
@@ -33,3 +33,4 @@ const CryptoChart = ({ symbol = "BINANCE:BTCUSDT", name = "Bitcoin" }: CryptoCha
 };
 
 export default CryptoChart;
+
