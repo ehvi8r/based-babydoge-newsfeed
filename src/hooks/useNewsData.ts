@@ -40,6 +40,20 @@ const estimateReadTime = (text: string): string => {
   return `${minutes} min read`;
 };
 
+// --- Utility function to sanitize URLs ---
+const sanitizeUrl = (url: string | undefined | null): string => {
+  if (
+    typeof url !== "string" ||
+    url.trim() === "" ||
+    url === "#" ||
+    url.toLowerCase() === "undefined" ||
+    !/^https?:\/\//.test(url.trim())
+  ) {
+    return "https://www.coindesk.com/";
+  }
+  return url.trim();
+};
+
 const generateUniqueNews = (): NewsItem[] => {
   const uniqueStories = [
     {
@@ -107,32 +121,21 @@ const generateUniqueNews = (): NewsItem[] => {
   const sources = ['CoinDesk', 'CoinTelegraph', 'Decrypt', 'The Block', 'CryptoPanic', 'CoinGecko', 'Blockworks', 'CryptoSlate', 'BeInCrypto', 'CryptoNews'];
 
   return uniqueStories.map((story, index) => {
-    // Make sure every URL is a string starting with http or https; fallback to CoinDesk if missing
-    let articleUrl = typeof story.url === "string" && story.url.startsWith("http")
-      ? story.url
-      : "https://www.coindesk.com/";
-
-    const newsItem = {
+    const safeUrl = sanitizeUrl(story.url);
+    return {
       id: `unique-${index + 1}`,
       title: story.title,
       summary: story.summary,
       category: story.category,
-      date: formatDate(new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString()),
+      date: formatDate(
+        new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString()
+      ),
       readTime: `${Math.floor(Math.random() * 5) + 2} min read`,
       imageUrl: `https://picsum.photos/400/300?random=${index + 50}`,
       content: `This comprehensive analysis explores ${story.title.toLowerCase()}. ${story.summary} Industry experts are closely monitoring these developments as they represent significant shifts in the cryptocurrency landscape. Market analysts believe this trend will have lasting impacts on digital asset adoption and blockchain technology implementation. The implications for both retail and institutional investors continue to unfold as the market matures.`,
       source: sources[index % sources.length],
-      url: articleUrl, // Always valid url
+      url: safeUrl,
     };
-    if (!newsItem.url || newsItem.url === "#" || newsItem.url === "" || newsItem.url === "undefined") {
-      console.error(
-        "DEBUG: Invalid URL detected in generated news:",
-        newsItem.title,
-        newsItem.url
-      );
-      newsItem.url = "https://www.coindesk.com/";
-    }
-    return newsItem;
   });
 };
 
@@ -172,14 +175,17 @@ const fetchCryptoNews = async (): Promise<NewsItem[]> => {
           .map((item: CryptoPanicItem, index: number) => ({
             id: `panic-${item.id}`,
             title: item.title,
-            summary: item.title.length > 150 ? item.title.substring(0, 150) + '...' : item.title,
-            category: 'Cryptocurrency',
+            summary:
+              item.title.length > 150
+                ? item.title.substring(0, 150) + "..."
+                : item.title,
+            category: "Cryptocurrency",
             date: formatDate(item.published_at),
             readTime: estimateReadTime(item.title),
             imageUrl: `https://picsum.photos/400/300?random=${index + 100}`,
             content: `Read the full article at the source for complete details about: ${item.title}`,
-            source: item.source?.title || 'CryptoPanic',
-            url: item.url // This should be the actual article URL from CryptoPanic
+            source: item.source?.title || "CryptoPanic",
+            url: sanitizeUrl(item.url),
           }));
         
         newsItems.push(...panicItems);
@@ -207,34 +213,19 @@ const fetchCryptoNews = async (): Promise<NewsItem[]> => {
     newsItems.push(...filteredGeneratedNews.slice(0, remainingSlots));
   }
 
-  // Guarantee every news item has a valid, real url
-  const cleanedNewsItems = newsItems
-    .slice(0, 30)
-    .map((item, idx) => {
-      let finalUrl =
-        typeof item.url === "string" && item.url.startsWith("http")
-          ? item.url
-          : "https://www.coindesk.com/";
-      if (
-        !finalUrl ||
-        finalUrl === "#" ||
-        finalUrl === "" ||
-        finalUrl === "undefined"
-      ) {
-        console.error(
-          "DEBUG: Fixing invalid NewsItem url before final return:",
-          item.title,
-          item.url
-        );
-        finalUrl = "https://www.coindesk.com/";
-      }
-      return { ...item, url: finalUrl };
-    });
+  // FINAL URL SANITIZATION STEP FOR ALL NEWS
+  const cleanedNewsItems = newsItems.slice(0, 30).map((item) => ({
+    ...item,
+    url: sanitizeUrl(item.url),
+  }));
 
-  // Log all URLs to make debugging easier
+  // Log result for debugging
   console.log(
-    "Final news items (title + url):",
-    cleanedNewsItems.map((item) => ({ title: item.title, url: item.url }))
+    "Final news items (for UI):",
+    cleanedNewsItems.map((item) => ({
+      title: item.title,
+      url: item.url,
+    }))
   );
 
   console.log(`Total unique news items: ${cleanedNewsItems.length}`);
