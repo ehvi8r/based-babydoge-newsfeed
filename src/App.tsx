@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Newsfeed from "./pages/Newsfeed";
 import Layout from "./components/Layout";
+import CoinTelegraphFeed from "./pages/CoinTelegraphFeed";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +21,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/newsfeed" element={<Newsfeed />} />
+            <Route path="/cointelegraph-feed" element={<CoinTelegraphFeed />} />
           </Routes>
         </Layout>
       </BrowserRouter>
