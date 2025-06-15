@@ -46,10 +46,10 @@ function generateTradingViewSymbol(
 
   // If only symbol provided, try generic formats
   if (symbol) {
-    // Fallback examples, can be improved
+    // FIX: Base should always be Token/USDC
     return chain === "ethereum"
       ? `BINANCE:${symbol}USDT`
-      : `AERODROME:${symbol}ETH`;
+      : `AERODROME:${symbol}USDC`;
   }
 
   return DEFAULT;
