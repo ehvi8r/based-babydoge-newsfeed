@@ -9,24 +9,40 @@ const UniswapWidget = () => {
 
   console.log('UniswapWidget rendering...');
 
-  // Ensure BigInt and other globals are available
+  // Ensure BigInt and other globals are available with more comprehensive polyfill
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      // Ensure BigInt is available
-      if (typeof BigInt !== 'undefined') {
+    // More aggressive BigInt polyfill
+    try {
+      if (typeof BigInt === 'undefined') {
+        console.error('BigInt is not available in this environment');
+        setWidgetError('BigInt not supported in this browser');
+        return;
+      }
+
+      // Ensure BigInt is available globally in multiple contexts
+      if (typeof window !== 'undefined') {
         (window as any).BigInt = BigInt;
+        if (!(window as any).global) {
+          (window as any).global = window;
+        }
+      }
+      
+      if (typeof globalThis !== 'undefined') {
         (globalThis as any).BigInt = BigInt;
       }
       
-      // Add additional global definitions that Uniswap might need
-      if (!(window as any).global) {
-        (window as any).global = window;
+      // Also set it on global if it exists
+      if (typeof global !== 'undefined') {
+        (global as any).BigInt = BigInt;
       }
+
+      console.log('BigInt setup complete:', typeof BigInt);
       
-      // Give it a moment to settle
-      setTimeout(() => setIsReady(true), 100);
-    } else {
-      setIsReady(true);
+      // Give it a moment to settle before rendering the widget
+      setTimeout(() => setIsReady(true), 200);
+    } catch (error) {
+      console.error('Error setting up BigInt:', error);
+      setWidgetError('Failed to initialize BigInt support');
     }
   }, []);
 
@@ -50,15 +66,16 @@ const UniswapWidget = () => {
     },
   };
 
-  // Use Ethereum mainnet instead of Base for better compatibility
-  const ETH_USDC_ADDRESS = "0xA0b86a33E6417bFf9a634482bC24bbA11D4aE41C"; // USDC on Ethereum
+  // Correct USDC address for Ethereum mainnet
+  const ETH_USDC_ADDRESS = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"; // Correct USDC on Ethereum
   const ETH_CHAIN_ID = 1; // Ethereum mainnet
 
   console.log('Widget config:', {
     chainId: ETH_CHAIN_ID,
     outputToken: ETH_USDC_ADDRESS,
     widgetKey,
-    isReady
+    isReady,
+    bigIntAvailable: typeof BigInt !== 'undefined'
   });
 
   if (!isReady) {
@@ -68,7 +85,7 @@ const UniswapWidget = () => {
           <h2 className="text-xl font-semibold">Trade Tokens</h2>
         </div>
         <div className="w-full p-4 text-center">
-          <p>Loading widget...</p>
+          <p>Initializing trading widget...</p>
         </div>
       </div>
     );
@@ -87,7 +104,7 @@ const UniswapWidget = () => {
               setWidgetError(null);
               setWidgetKey(prev => prev + 1);
               setIsReady(false);
-              setTimeout(() => setIsReady(true), 100);
+              setTimeout(() => setIsReady(true), 200);
             }} 
             className="mt-2 px-4 py-2 bg-red-600 text-white rounded"
           >
