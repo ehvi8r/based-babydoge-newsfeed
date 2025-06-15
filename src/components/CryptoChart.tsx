@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import TradingViewWidget from "react-tradingview-widget";
 import ChainTokenSelector from "./ChainTokenSelector";
@@ -14,8 +15,7 @@ function generateTradingViewSymbol(
     : "AERODROME:ETHUSDC";
   if (!symbol && !address) return DEFAULT;
 
-  // Popular mappings, add more symbols as needed
-  const KNOWN: Record<string, string> = {
+  const KNOWN: Record<string, Record<string, string>> = {
     ethereum: {
       BTC: "BINANCE:BTCUSDT",
       ETH: "BINANCE:ETHUSDT",
@@ -30,26 +30,24 @@ function generateTradingViewSymbol(
       USDT: "AERODROME:USDTETH",
       DEGEN: "AERODROME:DEGENETH",
     },
-  } as any;
+  };
 
   if (symbol && KNOWN[chain][symbol]) {
     return KNOWN[chain][symbol];
   }
 
-  // If contract provided, try to guess format (most DEX pairs aren't directly available in TradingView with contract notation)
-  // Placeholder: fallback to default, address-based support can be implemented with API support later
+  // Address logic (for future)
   if (address) {
-    // Optionally add logic to map contract address to TradingView symbol if supported
-    // For now, fallback
     return DEFAULT;
   }
 
-  // If only symbol provided, try generic formats
+  // If only symbol provided, create generic format
   if (symbol) {
-    // FIX: Base should always be Token/USDC
-    return chain === "ethereum"
-      ? `BINANCE:${symbol}USDT`
-      : `AERODROME:${symbol}USDC`;
+    if (chain === "ethereum") {
+      return `BINANCE:${symbol}USDT`;
+    }
+    // BASE (fix: always USDC/token, per request)
+    return `AERODROME:USDC${symbol.toUpperCase()}`;
   }
 
   return DEFAULT;
@@ -91,7 +89,7 @@ const CryptoChart = ({
 
   // Choose which chart to display
   let chartSymbol: string = symbol || "BINANCE:BTCUSDT";
-  let chartTitle: string = "Price Chart"; // always ensure fallback
+  let chartTitle: string = "Price Chart";
 
   if (customChart && (customChart.symbol || customChart.address)) {
     chartSymbol = generateTradingViewSymbol(
@@ -100,10 +98,10 @@ const CryptoChart = ({
       customChart.address
     );
 
-    // If symbol is present, determine label by chain
+    // Update title logic per chain
     if (customChart.symbol) {
       if (customChart.chain === "base") {
-        chartTitle = `${customChart.symbol.toUpperCase()}/USDC`;
+        chartTitle = `USDC / ${customChart.symbol.toUpperCase()}`;
       } else if (customChart.chain === "ethereum") {
         chartTitle = `ETH: ${customChart.symbol.toUpperCase()}`;
       } else {
@@ -152,3 +150,4 @@ const CryptoChart = ({
 };
 
 export default CryptoChart;
+
