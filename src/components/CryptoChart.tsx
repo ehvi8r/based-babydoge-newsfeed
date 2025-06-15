@@ -1,20 +1,125 @@
+import React, { useState } from "react";
+import TradingViewWidget from "react-tradingview-widget";
+import ChainTokenSelector from "./ChainTokenSelector";
 
-import TradingViewWidget from 'react-tradingview-widget';
+// Utility to map chain, symbol, and/or address to TradingView symbol
+function generateTradingViewSymbol(
+  chain: "ethereum" | "base",
+  symbol: string,
+  address: string
+): string {
+  // If directly entering symbol and Base/Ethereum is selected
+  const DEFAULT = chain === "ethereum"
+    ? "BINANCE:BTCUSDT"
+    : "AERODROME:ETHUSDC";
+  if (!symbol && !address) return DEFAULT;
+
+  // Popular mappings, add more symbols as needed
+  const KNOWN: Record<string, string> = {
+    ethereum: {
+      BTC: "BINANCE:BTCUSDT",
+      ETH: "BINANCE:ETHUSDT",
+      USDC: "BINANCE:USDCUSDT",
+      USDT: "BINANCE:USDTUSD",
+      PEPE: "UNISWAP3ETH:PEPEUSDC",
+      WETH: "UNISWAP3ETH:WETHUSDC",
+    },
+    base: {
+      ETH: "AERODROME:ETHUSDC",
+      USDC: "AERODROME:USDCETH",
+      USDT: "AERODROME:USDTETH",
+      DEGEN: "AERODROME:DEGENETH",
+    },
+  } as any;
+
+  if (symbol && KNOWN[chain][symbol]) {
+    return KNOWN[chain][symbol];
+  }
+
+  // If contract provided, try to guess format (most DEX pairs aren't directly available in TradingView with contract notation)
+  // Placeholder: fallback to default, address-based support can be implemented with API support later
+  if (address) {
+    // Optionally add logic to map contract address to TradingView symbol if supported
+    // For now, fallback
+    return DEFAULT;
+  }
+
+  // If only symbol provided, try generic formats
+  if (symbol) {
+    // Fallback examples, can be improved
+    return chain === "ethereum"
+      ? `BINANCE:${symbol}USDT`
+      : `AERODROME:${symbol}ETH`;
+  }
+
+  return DEFAULT;
+}
 
 interface CryptoChartProps {
   symbol?: string;
   name?: string;
 }
 
-const CryptoChart = ({ symbol = "BINANCE:BTCUSDT", name = "Bitcoin" }: CryptoChartProps) => {
+const CryptoChart = ({
+  symbol = "BINANCE:BTCUSDT",
+  name = "Bitcoin",
+}: CryptoChartProps) => {
+  // Custom selector state (null = no override, use dashboard)
+  const [customChart, setCustomChart] = useState<{
+    chain: "ethereum" | "base";
+    symbol: string;
+    address: string;
+  } | null>(null);
+
+  // Handlers for selector
+  const handleApply = (
+    chain: "ethereum" | "base",
+    sym: string,
+    addr: string
+  ) => {
+    // Nothing entered: don't override chart, stay on dashboard selection.
+    if (!sym && !addr) {
+      setCustomChart(null);
+      return;
+    }
+    setCustomChart({
+      chain,
+      symbol: sym,
+      address: addr,
+    });
+  };
+
+  const handleClear = () => setCustomChart(null);
+
+  // Choose which chart to display
+  let chartSymbol: string = symbol || "BINANCE:BTCUSDT";
+  let chartTitle: string = name ? `${name} Price Chart` : "Price Chart";
+
+  if (customChart && (customChart.symbol || customChart.address)) {
+    chartSymbol = generateTradingViewSymbol(
+      customChart.chain,
+      customChart.symbol,
+      customChart.address
+    );
+
+    if (customChart.symbol) chartTitle = `${customChart.symbol.toUpperCase()} Price Chart`;
+    else if (customChart.address) chartTitle = `Token (by Contract) Price Chart`;
+    else chartTitle = "Price Chart";
+  }
+
   return (
     <div className="glass-card p-6 rounded-lg mb-8 animate-fade-in">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold">Price Chart</h2>
+      {/* Token Selector - only overrides the chart if Show pressed */}
+      <ChainTokenSelector
+        onApply={handleApply}
+        onClear={handleClear}
+      />
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-semibold">{chartTitle}</h2>
       </div>
       <div className="h-[400px] w-full">
         <TradingViewWidget
-          symbol={symbol}
+          symbol={chartSymbol}
           theme="Dark"
           locale="en"
           autosize
@@ -33,4 +138,3 @@ const CryptoChart = ({ symbol = "BINANCE:BTCUSDT", name = "Bitcoin" }: CryptoCha
 };
 
 export default CryptoChart;
-

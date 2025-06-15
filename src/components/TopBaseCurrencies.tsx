@@ -1,3 +1,4 @@
+
 import { ArrowUpIcon, ArrowDownIcon, AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchWithCache } from "@/utils/apiUtils";
@@ -67,7 +68,6 @@ const TopBaseCurrencies = ({ onCurrencySelect }: TopBaseCurrenciesProps) => {
   });
 
   const handleRowClick = (currency: BaseCurrency) => {
-    // Use a universal TradingView symbol for ALL tokens
     const tradingViewSymbol = `COINBASE:${currency.symbol.toUpperCase()}USDC`;
     onCurrencySelect(tradingViewSymbol, currency.name);
   };
