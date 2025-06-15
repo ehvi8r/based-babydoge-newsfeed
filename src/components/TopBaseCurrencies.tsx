@@ -17,14 +17,6 @@ interface BaseCurrency {
   price_change_percentage_24h: number;
 }
 
-const TOKEN_SYMBOL_OVERRIDES: Record<string, string> = {
-  // coin id: correct TradingView symbol (all use COINBASE symbol convention)
-  "usd-coin": "COINBASE:USDCUSDC",           // USDC
-  "based-brett": "COINBASE:BRETTUSDC",       // Brett
-  "basenji": "COINBASE:BENJIUSDC",           // Basenji
-  "higher": "COINBASE:HIGHERUSDC",           // Higher
-};
-
 const fetchTopBaseCurrencies = async (): Promise<BaseCurrency[]> => {
   try {
     // Fetch top Base ecosystem tokens
@@ -75,12 +67,8 @@ const TopBaseCurrencies = ({ onCurrencySelect }: TopBaseCurrenciesProps) => {
   });
 
   const handleRowClick = (currency: BaseCurrency) => {
-    let tradingViewSymbol;
-    if (TOKEN_SYMBOL_OVERRIDES[currency.id]) {
-      tradingViewSymbol = TOKEN_SYMBOL_OVERRIDES[currency.id];
-    } else {
-      tradingViewSymbol = `COINBASE:${currency.symbol.toUpperCase()}USDC`;
-    }
+    // Use a universal TradingView symbol for ALL tokens
+    const tradingViewSymbol = `COINBASE:${currency.symbol.toUpperCase()}USDC`;
     onCurrencySelect(tradingViewSymbol, currency.name);
   };
 
