@@ -21,14 +21,23 @@ export default defineConfig(({ mode }) => ({
   },
   define: {
     global: 'globalThis',
+    'globalThis.BigInt': 'BigInt',
   },
   optimizeDeps: {
     include: ['@uniswap/widgets'],
     esbuildOptions: {
       target: 'es2020',
+      define: {
+        global: 'globalThis',
+      },
     },
   },
   build: {
     target: 'es2020',
+    rollupOptions: {
+      output: {
+        format: 'es',
+      },
+    },
   },
 }));

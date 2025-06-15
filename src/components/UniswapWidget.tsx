@@ -7,10 +7,24 @@ const UniswapWidget = () => {
 
   console.log('UniswapWidget rendering...');
 
-  // Add BigInt polyfill for compatibility
+  // Add comprehensive BigInt polyfill and debugging
   useEffect(() => {
-    if (typeof BigInt === 'undefined') {
-      console.warn('BigInt not supported, widget may not work properly');
+    console.log('Checking BigInt support...');
+    console.log('typeof BigInt:', typeof BigInt);
+    console.log('BigInt available:', typeof BigInt !== 'undefined');
+    
+    // Ensure BigInt is available globally
+    if (typeof window !== 'undefined') {
+      if (typeof window.BigInt === 'undefined' && typeof BigInt !== 'undefined') {
+        (window as any).BigInt = BigInt;
+        console.log('Added BigInt to window');
+      }
+      
+      // Also ensure it's available on globalThis
+      if (typeof (globalThis as any).BigInt === 'undefined' && typeof BigInt !== 'undefined') {
+        (globalThis as any).BigInt = BigInt;
+        console.log('Added BigInt to globalThis');
+      }
     }
   }, []);
 
@@ -61,6 +75,7 @@ const UniswapWidget = () => {
   }
 
   try {
+    console.log('Attempting to render SwapWidget...');
     return (
       <div className="glass-card p-6 rounded-lg animate-fade-in">
         <div className="flex items-center justify-between mb-6">
@@ -71,9 +86,9 @@ const UniswapWidget = () => {
             theme={theme}
             tokenList="https://gateway.ipfs.io/ipns/tokens.uniswap.org"
             width="100%"
-            defaultChainId={8453}
+            defaultChainId={1}
             defaultInputTokenAddress="NATIVE"
-            defaultOutputTokenAddress="0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+            defaultOutputTokenAddress="0xA0b86a33E6441c8b2f5b9F4D1eF0A5f67F96CC3E"
             onError={(error) => {
               console.error('Uniswap Widget Error:', error);
               setWidgetError(error.message || 'Unknown widget error');
