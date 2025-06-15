@@ -12,14 +12,7 @@ const UniswapWidget = () => {
     outline: '#605F5B',
     dialog: '#3A3935',
     fontFamily: 'inherit',
-    borderRadius: {
-      button: 1.0,
-      container: 1.0,
-      large: 1.0,
-      medium: 1.0,
-      small: 1.0,
-      xsmall: 1.0,
-    },
+    borderRadius: 1.0,
   };
 
   return (
@@ -33,7 +26,7 @@ const UniswapWidget = () => {
           tokenList="https://gateway.ipfs.io/ipns/tokens.uniswap.org"
           width="100%"
           defaultInputTokenAddress="NATIVE"
-          defaultOutputTokenAddress="0xA0b86a33E6441d59aC4CFCBa63dF777D0E7516b1"
+          defaultOutputTokenAddress="0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
         />
       </div>
     </div>
