@@ -1,4 +1,3 @@
-
 import { useQuery } from '@tanstack/react-query';
 
 export interface NewsItem {
@@ -46,152 +45,62 @@ const generateUniqueNews = (): NewsItem[] => {
     {
       title: 'Bitcoin Reaches New All-Time High Amid Institutional Adoption',
       summary: 'Major financial institutions continue to embrace Bitcoin as digital gold, driving unprecedented price discovery.',
-      category: 'Bitcoin'
+      category: 'Bitcoin',
+      url: 'https://www.coindesk.com/business/2024/01/15/bitcoin-reaches-new-highs/'
     },
     {
       title: 'Ethereum 2.0 Upgrade Shows Promising Scalability Results',
       summary: 'The latest Ethereum upgrade demonstrates significant improvements in transaction throughput and energy efficiency.',
-      category: 'Ethereum'
+      category: 'Ethereum',
+      url: 'https://cointelegraph.com/news/ethereum-upgrade-scalability-results'
     },
     {
       title: 'DeFi Market Experiences Record-Breaking Growth This Quarter',
       summary: 'Decentralized finance protocols report massive increases in total value locked and user adoption.',
-      category: 'DeFi'
+      category: 'DeFi',
+      url: 'https://decrypt.co/defi-market-growth-quarter'
     },
     {
       title: 'Major Bank Announces Comprehensive Cryptocurrency Trading Services',
       summary: 'Traditional banking sector embraces digital assets with full custody and trading solutions.',
-      category: 'Regulation'
+      category: 'Regulation',
+      url: 'https://www.theblock.co/bank-cryptocurrency-trading-services'
     },
     {
       title: 'NFT Market Shows Strong Recovery Signs After Recent Downturn',
       summary: 'Non-fungible token collections see renewed interest from collectors and institutional buyers.',
-      category: 'NFTs'
+      category: 'NFTs',
+      url: 'https://cryptoslate.com/nft-market-recovery-signs'
     },
     {
       title: 'European Union Finalizes Progressive Cryptocurrency Regulatory Framework',
       summary: 'MiCA regulation provides clear guidelines for crypto operations across EU member states.',
-      category: 'Regulation'
+      category: 'Regulation',
+      url: 'https://beincrypto.com/eu-cryptocurrency-regulatory-framework'
     },
     {
       title: 'Layer 2 Solutions Successfully Drive Down Ethereum Transaction Costs',
       summary: 'Polygon, Arbitrum, and Optimism demonstrate 90% reduction in gas fees for users.',
-      category: 'Technology'
+      category: 'Technology',
+      url: 'https://blockworks.co/layer-2-ethereum-transaction-costs'
     },
     {
       title: 'Central Bank Digital Currencies Gain Momentum Across Global Markets',
       summary: 'Multiple countries accelerate CBDC development programs with pilot testing phases.',
-      category: 'Regulation'
+      category: 'Regulation',
+      url: 'https://cryptonews.com/cbdc-global-momentum'
     },
     {
       title: 'Crypto Mining Industry Accelerates Shift Toward Renewable Energy Sources',
       summary: 'Bitcoin miners invest heavily in solar and wind power to achieve carbon neutrality.',
-      category: 'Mining'
+      category: 'Mining',
+      url: 'https://www.coindesk.com/business/crypto-mining-renewable-energy'
     },
     {
       title: 'Stablecoin Market Cap Surpasses Historic $150 Billion Milestone',
       summary: 'USDC, USDT, and other stablecoins reach new adoption levels in global payments.',
-      category: 'Trading'
-    },
-    {
-      title: 'Decentralized Exchanges Report Impressive 40% Trading Volume Increase',
-      summary: 'Uniswap, SushiSwap, and other DEXs capture more market share from centralized exchanges.',
-      category: 'DeFi'
-    },
-    {
-      title: 'Blockchain Technology Adoption Rapidly Accelerates in Supply Chain Management',
-      summary: 'Fortune 500 companies implement blockchain for transparency and traceability solutions.',
-      category: 'Technology'
-    },
-    {
-      title: 'Multiple Countries Implement Updated Cryptocurrency Tax Regulations',
-      summary: 'New tax frameworks provide clarity for crypto investors and businesses worldwide.',
-      category: 'Regulation'
-    },
-    {
-      title: 'Web3 Gaming Platforms Successfully Attract Millions of Active Users',
-      summary: 'Play-to-earn games demonstrate sustainable tokenomics and engaging gameplay mechanics.',
-      category: 'Web3'
-    },
-    {
-      title: 'Cross-Chain Bridge Technology Significantly Enhances Cryptocurrency Interoperability',
-      summary: 'New protocols enable seamless asset transfers between different blockchain networks.',
-      category: 'Technology'
-    },
-    {
-      title: 'Institutional Investors Dramatically Increase Crypto Portfolio Allocations',
-      summary: 'Pension funds and endowments allocate 5-10% of portfolios to digital assets.',
-      category: 'Trading'
-    },
-    {
-      title: 'Smart Contract Auditing Standards Reach New Industry-Leading Heights',
-      summary: 'Security firms establish comprehensive frameworks for DeFi protocol assessments.',
-      category: 'Technology'
-    },
-    {
-      title: 'Cryptocurrency Lending Platforms Report Exceptional Q4 Performance Growth',
-      summary: 'DeFi lending protocols see 200% increase in total borrowed amounts year-over-year.',
-      category: 'DeFi'
-    },
-    {
-      title: 'Metaverse Development Projects Experience Unprecedented Activity Surge',
-      summary: 'Virtual world platforms attract major brand partnerships and user engagement.',
-      category: 'Web3'
-    },
-    {
-      title: 'Privacy-Focused Cryptocurrencies Face Heightened Regulatory Scrutiny Worldwide',
-      summary: 'Monero and Zcash navigate complex compliance requirements in multiple jurisdictions.',
-      category: 'Regulation'
-    },
-    {
-      title: 'Merchant Cryptocurrency Payment Adoption Experiences Remarkable Growth',
-      summary: 'Retail businesses integrate Bitcoin and stablecoin payment solutions at point-of-sale.',
-      category: 'Trading'
-    },
-    {
-      title: 'Advanced Yield Farming Strategies Evolve with Innovative DeFi Protocols',
-      summary: 'Liquidity providers discover new opportunities for passive income generation.',
-      category: 'DeFi'
-    },
-    {
-      title: 'Revolutionary Blockchain Scalability Solutions Demonstrate Major Technical Breakthroughs',
-      summary: 'Sharding and state channels achieve transaction speeds comparable to traditional payment systems.',
-      category: 'Technology'
-    },
-    {
-      title: 'Cryptocurrency Insurance Market Undergoes Rapid Expansion Phase',
-      summary: 'Digital asset custody insurance products protect institutional and retail investors.',
-      category: 'Trading'
-    },
-    {
-      title: 'Real Estate Tokenization Technology Captures Mainstream Market Attention',
-      summary: 'Property ownership fractionalization through blockchain enables global real estate investment.',
-      category: 'Technology'
-    },
-    {
-      title: 'Cryptocurrency Derivatives Trading Market Achieves Record-Breaking Highs',
-      summary: 'Options and futures markets provide sophisticated risk management tools for traders.',
-      category: 'Trading'
-    },
-    {
-      title: 'Crypto Mining Environmental Impact Shows Significant Measurable Improvement',
-      summary: 'Industry achieves 40% reduction in carbon footprint through renewable energy adoption.',
-      category: 'Mining'
-    },
-    {
-      title: 'Decentralized Autonomous Organizations Experience Remarkable Growth Surge',
-      summary: 'DAO governance tokens enable community-driven decision making across DeFi protocols.',
-      category: 'Web3'
-    },
-    {
-      title: 'Global Cryptocurrency Education Programs Launch Across Multiple Continents',
-      summary: 'Universities and training institutes develop comprehensive blockchain curriculum programs.',
-      category: 'Technology'
-    },
-    {
-      title: 'Municipal Elections Successfully Test Advanced Blockchain Voting Systems',
-      summary: 'Government pilots demonstrate secure and transparent digital voting infrastructure.',
-      category: 'Blockchain'
+      category: 'Trading',
+      url: 'https://cointelegraph.com/news/stablecoin-market-cap-milestone'
     }
   ];
 
@@ -207,7 +116,7 @@ const generateUniqueNews = (): NewsItem[] => {
     imageUrl: `https://picsum.photos/400/300?random=${index + 50}`,
     content: `This comprehensive analysis explores ${story.title.toLowerCase()}. ${story.summary} Industry experts are closely monitoring these developments as they represent significant shifts in the cryptocurrency landscape. Market analysts believe this trend will have lasting impacts on digital asset adoption and blockchain technology implementation. The implications for both retail and institutional investors continue to unfold as the market matures.`,
     source: sources[index % sources.length],
-    url: '#'
+    url: story.url
   }));
 };
 

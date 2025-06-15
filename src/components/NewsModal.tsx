@@ -34,15 +34,11 @@ const NewsModal = ({ news, isOpen, onClose }: NewsModalProps) => {
   const handleReadFull = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    e.stopImmediatePropagation();
     
     console.log('Read Full Article clicked, URL:', news.url);
     
-    if (news.url && news.url.trim() !== '') {
-      // Use setTimeout to ensure the event has been fully processed
-      setTimeout(() => {
-        window.open(news.url, '_blank', 'noopener,noreferrer');
-      }, 0);
+    if (news.url && news.url.trim() !== '' && news.url !== '#') {
+      window.open(news.url, '_blank', 'noopener,noreferrer');
     } else {
       console.error('No valid URL found for this article');
     }
@@ -92,16 +88,23 @@ const NewsModal = ({ news, isOpen, onClose }: NewsModalProps) => {
               </div>
               
               <div className="border-t pt-4">
-                <a
-                  href={news.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={handleReadFull}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors no-underline"
-                >
-                  Read Full Article
-                  <ExternalLink className="w-4 h-4" />
-                </a>
+                {news.url && news.url !== '#' ? (
+                  <a
+                    href={news.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={handleReadFull}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors no-underline"
+                  >
+                    Read Full Article
+                    <ExternalLink className="w-4 h-4" />
+                  </a>
+                ) : (
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-400 text-white rounded-lg opacity-50 cursor-not-allowed">
+                    Article URL Not Available
+                    <ExternalLink className="w-4 h-4" />
+                  </div>
+                )}
                 <p className="text-xs text-muted-foreground mt-2">
                   Source: {news.source}
                 </p>
