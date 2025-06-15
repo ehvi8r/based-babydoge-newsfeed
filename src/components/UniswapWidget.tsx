@@ -1,8 +1,8 @@
-
 import React, { useEffect, useState } from 'react'
 import { SwapWidget } from '@uniswap/widgets'
 import '@uniswap/widgets/fonts.css'
 import '@uniswap/widgets/theme.css'
+import '../styles/uniswap-theme.css'
 
 declare global {
   interface Window {
@@ -63,7 +63,11 @@ const darkTheme = {
   outline: '#605F5B',
   dialog: '#141413',
   fontFamily: 'Inter',
-  borderRadius: 1.0,
+  borderRadius: {
+    button: 12,
+    container: 16,
+    actionButton: 12,
+  },
 }
 
 const UniswapWidget: React.FC = () => {
