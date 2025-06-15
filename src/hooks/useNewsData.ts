@@ -1,3 +1,4 @@
+
 import { useQuery } from '@tanstack/react-query';
 
 export interface NewsItem {
@@ -106,18 +107,21 @@ const generateUniqueNews = (): NewsItem[] => {
 
   const sources = ['CoinDesk', 'CoinTelegraph', 'Decrypt', 'The Block', 'CryptoPanic', 'CoinGecko', 'Blockworks', 'CryptoSlate', 'BeInCrypto', 'CryptoNews'];
 
-  return uniqueStories.map((story, index) => ({
-    id: `unique-${index + 1}`,
-    title: story.title,
-    summary: story.summary,
-    category: story.category,
-    date: formatDate(new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString()),
-    readTime: `${Math.floor(Math.random() * 5) + 2} min read`,
-    imageUrl: `https://picsum.photos/400/300?random=${index + 50}`,
-    content: `This comprehensive analysis explores ${story.title.toLowerCase()}. ${story.summary} Industry experts are closely monitoring these developments as they represent significant shifts in the cryptocurrency landscape. Market analysts believe this trend will have lasting impacts on digital asset adoption and blockchain technology implementation. The implications for both retail and institutional investors continue to unfold as the market matures.`,
-    source: sources[index % sources.length],
-    url: story.url
-  }));
+  return uniqueStories.map((story, index) => {
+    console.log(`Generating story ${index + 1} with URL:`, story.url);
+    return {
+      id: `unique-${index + 1}`,
+      title: story.title,
+      summary: story.summary,
+      category: story.category,
+      date: formatDate(new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString()),
+      readTime: `${Math.floor(Math.random() * 5) + 2} min read`,
+      imageUrl: `https://picsum.photos/400/300?random=${index + 50}`,
+      content: `This comprehensive analysis explores ${story.title.toLowerCase()}. ${story.summary} Industry experts are closely monitoring these developments as they represent significant shifts in the cryptocurrency landscape. Market analysts believe this trend will have lasting impacts on digital asset adoption and blockchain technology implementation. The implications for both retail and institutional investors continue to unfold as the market matures.`,
+      source: sources[index % sources.length],
+      url: story.url // Make sure the URL is preserved here
+    };
+  });
 };
 
 const fetchCryptoNews = async (): Promise<NewsItem[]> => {
@@ -139,13 +143,11 @@ const fetchCryptoNews = async (): Promise<NewsItem[]> => {
       if (cryptoPanicData.results && cryptoPanicData.results.length > 0) {
         const panicItems = cryptoPanicData.results
           .filter((item: CryptoPanicItem) => {
-            // Normalize title by removing common prefixes and suffixes that might indicate updates
             const normalizedTitle = item.title
               .replace(/^(Updated:|Update:|\[Update\]|\[Updated\])/i, '')
               .replace(/\s*-\s*(Updated|Update)$/i, '')
               .trim();
             
-            // Check if we've already seen this title
             if (seenTitles.has(normalizedTitle.toLowerCase())) {
               console.log(`Filtering out duplicate: ${item.title}`);
               return false;
@@ -165,7 +167,7 @@ const fetchCryptoNews = async (): Promise<NewsItem[]> => {
             imageUrl: `https://picsum.photos/400/300?random=${index + 100}`,
             content: `Read the full article at the source for complete details about: ${item.title}`,
             source: item.source?.title || 'CryptoPanic',
-            url: item.url
+            url: item.url // This should be the actual article URL from CryptoPanic
           }));
         
         newsItems.push(...panicItems);
@@ -181,7 +183,6 @@ const fetchCryptoNews = async (): Promise<NewsItem[]> => {
   const remainingSlots = 30 - newsItems.length;
   
   if (remainingSlots > 0) {
-    // Also check generated news for any potential title conflicts
     const filteredGeneratedNews = generatedNews.filter(news => {
       const normalizedTitle = news.title.toLowerCase();
       if (seenTitles.has(normalizedTitle)) {
@@ -194,10 +195,11 @@ const fetchCryptoNews = async (): Promise<NewsItem[]> => {
     newsItems.push(...filteredGeneratedNews.slice(0, remainingSlots));
   }
 
-  // Ensure we have exactly 30 unique items
+  // Log all URLs to debug
+  console.log('Final news items URLs:', newsItems.map(item => ({ title: item.title, url: item.url })));
+
   const uniqueNewsItems = newsItems.slice(0, 30);
   console.log(`Total unique news items: ${uniqueNewsItems.length}`);
-  console.log(`Unique titles: ${Array.from(seenTitles).length}`);
   
   return uniqueNewsItems;
 };
