@@ -121,7 +121,7 @@ const generateUniqueNews = (): NewsItem[] => {
   const sources = ['CoinDesk', 'CoinTelegraph', 'Decrypt', 'The Block', 'CryptoPanic', 'CoinGecko', 'Blockworks', 'CryptoSlate', 'BeInCrypto', 'CryptoNews'];
 
   return uniqueStories.map((story, index) => {
-    const safeUrl = sanitizeUrl(story.url);
+    // Always sanitize here!
     return {
       id: `unique-${index + 1}`,
       title: story.title,
@@ -134,7 +134,7 @@ const generateUniqueNews = (): NewsItem[] => {
       imageUrl: `https://picsum.photos/400/300?random=${index + 50}`,
       content: `This comprehensive analysis explores ${story.title.toLowerCase()}. ${story.summary} Industry experts are closely monitoring these developments as they represent significant shifts in the cryptocurrency landscape. Market analysts believe this trend will have lasting impacts on digital asset adoption and blockchain technology implementation. The implications for both retail and institutional investors continue to unfold as the market matures.`,
       source: sources[index % sources.length],
-      url: safeUrl,
+      url: sanitizeUrl(story.url), // <== 100% ensure proper URL!
     };
   });
 };
@@ -185,9 +185,9 @@ const fetchCryptoNews = async (): Promise<NewsItem[]> => {
             imageUrl: `https://picsum.photos/400/300?random=${index + 100}`,
             content: `Read the full article at the source for complete details about: ${item.title}`,
             source: item.source?.title || "CryptoPanic",
-            url: sanitizeUrl(item.url),
+            url: sanitizeUrl(item.url), // <== extra-safe
           }));
-        
+
         newsItems.push(...panicItems);
         console.log(`Added ${panicItems.length} unique items from CryptoPanic`);
       }
@@ -199,8 +199,9 @@ const fetchCryptoNews = async (): Promise<NewsItem[]> => {
   // Add unique generated content to reach 30 total items
   const generatedNews = generateUniqueNews();
   const remainingSlots = 30 - newsItems.length;
-  
+
   if (remainingSlots > 0) {
+    // Filter for unique titles, as before
     const filteredGeneratedNews = generatedNews.filter(news => {
       const normalizedTitle = news.title.toLowerCase();
       if (seenTitles.has(normalizedTitle)) {
@@ -209,15 +210,37 @@ const fetchCryptoNews = async (): Promise<NewsItem[]> => {
       seenTitles.add(normalizedTitle);
       return true;
     });
-    
+
     newsItems.push(...filteredGeneratedNews.slice(0, remainingSlots));
   }
 
-  // FINAL URL SANITIZATION STEP FOR ALL NEWS
-  const cleanedNewsItems = newsItems.slice(0, 30).map((item) => ({
-    ...item,
-    url: sanitizeUrl(item.url),
-  }));
+  // FINAL fail-safe step: guarantee every news item has a valid, real url
+  const cleanedNewsItems = newsItems.slice(0, 30).map((item) => {
+    const fixedUrl = sanitizeUrl(item.url);
+    if (
+      !fixedUrl ||
+      fixedUrl === "#" ||
+      fixedUrl.trim() === "" ||
+      fixedUrl === "undefined"
+    ) {
+      // fallback (should never happen, but just in case)
+      console.warn("Fixing invalid NewsItem url before final return (last fail-safe):", item.title, item.url);
+      return { ...item, url: "https://www.coindesk.com/" };
+    }
+    return { ...item, url: fixedUrl };
+  });
+
+  // Log and check for leftovers
+  cleanedNewsItems.forEach((item) => {
+    if (
+      !item.url ||
+      item.url === "#" ||
+      item.url.trim() === "" ||
+      item.url === "undefined"
+    ) {
+      console.error("AFTER FIX: NewsItem STILL has invalid URL:", item.title, item.url);
+    }
+  });
 
   // Log result for debugging
   console.log(
