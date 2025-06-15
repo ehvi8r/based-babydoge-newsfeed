@@ -39,34 +39,10 @@ const UniswapWidget = () => {
   const BASE_USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
   const BASE_CHAIN_ID = 8453;
 
-  // Define Base chain configuration
-  const baseChain = {
-    id: BASE_CHAIN_ID,
-    name: 'Base',
-    network: 'base',
-    nativeCurrency: {
-      decimals: 18,
-      name: 'Ethereum',
-      symbol: 'ETH',
-    },
-    rpcUrls: {
-      default: {
-        http: ['https://mainnet.base.org'],
-      },
-      public: {
-        http: ['https://mainnet.base.org'],
-      },
-    },
-    blockExplorers: {
-      default: { name: 'BaseScan', url: 'https://basescan.org' },
-    },
-  };
-
   console.log('Widget config:', {
     chainId: BASE_CHAIN_ID,
     outputToken: BASE_USDC_ADDRESS,
-    widgetKey,
-    baseChain
+    widgetKey
   });
 
   if (widgetError) {
@@ -106,7 +82,6 @@ const UniswapWidget = () => {
             defaultChainId={BASE_CHAIN_ID}
             defaultInputTokenAddress="NATIVE"
             defaultOutputTokenAddress={BASE_USDC_ADDRESS}
-            chains={[baseChain]}
             onError={(error) => {
               console.error('Uniswap Widget Error:', error);
               setWidgetError(error.message || 'Unknown widget error');
