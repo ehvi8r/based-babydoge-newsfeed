@@ -46,7 +46,10 @@ const sanitizeUrl = (url: string | undefined | null): string => {
     typeof url !== "string" ||
     url.trim() === "" ||
     url === "#" ||
+    url === null ||
     url.toLowerCase() === "undefined" ||
+    url.toLowerCase() === "null" ||
+    url.toLowerCase().includes("about:blank") ||
     !/^https?:\/\//.test(url.trim())
   ) {
     return "https://www.coindesk.com/";
@@ -221,7 +224,10 @@ const fetchCryptoNews = async (): Promise<NewsItem[]> => {
       !fixedUrl ||
       fixedUrl === "#" ||
       fixedUrl.trim() === "" ||
-      fixedUrl === "undefined"
+      fixedUrl === "undefined" ||
+      fixedUrl === "null" ||
+      fixedUrl === null ||
+      fixedUrl.toLowerCase().includes("about:blank")
     ) {
       // fallback (should never happen, but just in case)
       console.warn("Fixing invalid NewsItem url before final return (last fail-safe):", item.title, item.url);
@@ -236,7 +242,10 @@ const fetchCryptoNews = async (): Promise<NewsItem[]> => {
       !item.url ||
       item.url === "#" ||
       item.url.trim() === "" ||
-      item.url === "undefined"
+      item.url === "undefined" ||
+      item.url === "null" ||
+      item.url === null ||
+      item.url.toLowerCase().includes("about:blank")
     ) {
       console.error("AFTER FIX: NewsItem STILL has invalid URL:", item.title, item.url);
     }
