@@ -100,10 +100,10 @@ const CryptoChart = ({
       customChart.address
     );
 
-    // Only want the "pair" title if symbol is present
+    // If symbol is present, determine label by chain
     if (customChart.symbol) {
       if (customChart.chain === "base") {
-        chartTitle = `Base ETH: ${customChart.symbol.toUpperCase()}`;
+        chartTitle = `${customChart.symbol.toUpperCase()}/USDC`;
       } else if (customChart.chain === "ethereum") {
         chartTitle = `ETH: ${customChart.symbol.toUpperCase()}`;
       } else {
@@ -113,7 +113,6 @@ const CryptoChart = ({
       chartTitle = `Token (by Contract) Price Chart`;
     }
   } else if (symbol && name && symbol.startsWith("BINANCE:")) {
-    // Attempt to show "ETH: BTC" etc for ETH/BTC
     if (symbol.endsWith("USDT")) {
       chartTitle = `ETH: ${symbol.replace("BINANCE:", "").replace("USDT", "")}`;
     } else {
