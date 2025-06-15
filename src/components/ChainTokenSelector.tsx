@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -168,9 +167,8 @@ const ChainTokenSelector: React.FC<ChainTokenSelectorProps> = ({
         <Button
           type="button"
           variant="default"
-          disabled={!!address && !isValidEthAddress(address)}
+          disabled={!!address && !isValidEthAddress(address) || loadingTokens}
           onClick={handleApply}
-          loading={loadingTokens ? "true" : undefined}
         >
           {loadingTokens ? "Loading..." : "Show Chart"}
         </Button>
