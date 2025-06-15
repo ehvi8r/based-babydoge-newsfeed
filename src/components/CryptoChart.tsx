@@ -1,137 +1,20 @@
 
-import React, { useState } from "react";
-import TradingViewWidget from "react-tradingview-widget";
-import ChainTokenSelector from "./ChainTokenSelector";
-
-// Utility to map chain, symbol, and/or address to TradingView symbol
-function generateTradingViewSymbol(
-  chain: "ethereum" | "base",
-  symbol: string,
-  address: string
-): string {
-  // If directly entering symbol and Base/Ethereum is selected
-  const DEFAULT = chain === "ethereum"
-    ? "BINANCE:BTCUSDT"
-    : "AERODROME:ETHUSDC";
-  if (!symbol && !address) return DEFAULT;
-
-  const KNOWN: Record<string, Record<string, string>> = {
-    ethereum: {
-      BTC: "BINANCE:BTCUSDT",
-      ETH: "BINANCE:ETHUSDT",
-      USDC: "BINANCE:USDCUSDT",
-      USDT: "BINANCE:USDTUSD",
-      PEPE: "UNISWAP3ETH:PEPEUSDC",
-      WETH: "UNISWAP3ETH:WETHUSDC",
-    },
-    base: {
-      ETH: "AERODROME:ETHUSDC",
-      USDC: "AERODROME:USDCETH",
-      USDT: "AERODROME:USDTETH",
-      DEGEN: "AERODROME:DEGENETH",
-    },
-  };
-
-  if (symbol && KNOWN[chain][symbol]) {
-    return KNOWN[chain][symbol];
-  }
-
-  // Address logic (for future)
-  if (address) {
-    return DEFAULT;
-  }
-
-  // If only symbol provided, create generic format
-  if (symbol) {
-    if (chain === "ethereum") {
-      return `BINANCE:${symbol}USDT`;
-    }
-    // BASE (fix: always USDC/token, per request)
-    return `AERODROME:USDC${symbol.toUpperCase()}`;
-  }
-
-  return DEFAULT;
-}
+import TradingViewWidget from 'react-tradingview-widget';
 
 interface CryptoChartProps {
   symbol?: string;
   name?: string;
 }
 
-const CryptoChart = ({
-  symbol = "BINANCE:BTCUSDT",
-  name = "Bitcoin",
-}: CryptoChartProps) => {
-  const [customChart, setCustomChart] = useState<{
-    chain: "ethereum" | "base";
-    symbol: string;
-    address: string;
-  } | null>(null);
-
-  // Handlers for selector
-  const handleApply = (
-    chain: "ethereum" | "base",
-    sym: string,
-    addr: string
-  ) => {
-    if (!sym && !addr) {
-      setCustomChart(null);
-      return;
-    }
-    setCustomChart({
-      chain,
-      symbol: sym,
-      address: addr,
-    });
-  };
-
-  const handleClear = () => setCustomChart(null);
-
-  // Choose which chart to display
-  let chartSymbol: string = symbol || "BINANCE:BTCUSDT";
-  let chartTitle: string = "Price Chart";
-
-  if (customChart && (customChart.symbol || customChart.address)) {
-    chartSymbol = generateTradingViewSymbol(
-      customChart.chain,
-      customChart.symbol,
-      customChart.address
-    );
-
-    // Update title logic per chain
-    if (customChart.symbol) {
-      if (customChart.chain === "base") {
-        chartTitle = `USDC / ${customChart.symbol.toUpperCase()}`;
-      } else if (customChart.chain === "ethereum") {
-        chartTitle = `ETH: ${customChart.symbol.toUpperCase()}`;
-      } else {
-        chartTitle = `${customChart.symbol.toUpperCase()} Price Chart`;
-      }
-    } else if (customChart.address) {
-      chartTitle = `Token (by Contract) Price Chart`;
-    }
-  } else if (symbol && name && symbol.startsWith("BINANCE:")) {
-    if (symbol.endsWith("USDT")) {
-      chartTitle = `ETH: ${symbol.replace("BINANCE:", "").replace("USDT", "")}`;
-    } else {
-      chartTitle = `${name} Price Chart`;
-    }
-  } else if (name) {
-    chartTitle = `${name} Price Chart`;
-  }
-
+const CryptoChart = ({ symbol = "BINANCE:BTCUSDT", name = "Bitcoin" }: CryptoChartProps) => {
   return (
     <div className="glass-card p-6 rounded-lg mb-8 animate-fade-in">
-      <ChainTokenSelector
-        onApply={handleApply}
-        onClear={handleClear}
-      />
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">{chartTitle}</h2>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-semibold">Price Chart</h2>
       </div>
       <div className="h-[400px] w-full">
         <TradingViewWidget
-          symbol={chartSymbol}
+          symbol={symbol}
           theme="Dark"
           locale="en"
           autosize
