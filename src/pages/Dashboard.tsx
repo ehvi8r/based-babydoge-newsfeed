@@ -7,7 +7,7 @@ import CryptoList from "@/components/CryptoList";
 import TopBaseCurrencies from "@/components/TopBaseCurrencies";
 import BaseCurrencies from "@/components/BaseCurrencies";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
-// import UniswapWidget from "@/components/UniswapWidget";
+import UniswapWidget from "@/components/UniswapWidget";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
 const Dashboard = () => {
@@ -46,14 +46,9 @@ const Dashboard = () => {
             <ErrorBoundary>
               <CryptoChart symbol={selectedCurrency.symbol} name={selectedCurrency.name} />
             </ErrorBoundary>
-            <div className="glass-card p-6 rounded-lg animate-fade-in">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold">Trade Tokens</h2>
-              </div>
-              <div className="w-full p-4 bg-yellow-100 text-yellow-800 rounded">
-                <p>Uniswap Widget temporarily disabled to debug loop issue</p>
-              </div>
-            </div>
+            <ErrorBoundary>
+              <UniswapWidget />
+            </ErrorBoundary>
           </div>
           <div>
             <ErrorBoundary>
