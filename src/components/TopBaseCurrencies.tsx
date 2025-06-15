@@ -1,4 +1,3 @@
-
 import { ArrowUpIcon, ArrowDownIcon, AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchWithCache } from "@/utils/apiUtils";
@@ -58,6 +57,12 @@ const fetchTopBaseCurrencies = async (): Promise<BaseCurrency[]> => {
   }
 };
 
+const symbolOverrides: Record<string, string> = {
+  brett: "BRETTUSDC",
+  benji: "BENJIUSDC",
+  higher: "HIGHERUSDC"
+};
+
 const TopBaseCurrencies = ({ onCurrencySelect }: TopBaseCurrenciesProps) => {
   const { data: baseCurrencies, isLoading, isError } = useQuery({
     queryKey: ['topBaseCurrencies'],
@@ -68,7 +73,11 @@ const TopBaseCurrencies = ({ onCurrencySelect }: TopBaseCurrenciesProps) => {
   });
 
   const handleRowClick = (currency: BaseCurrency) => {
-    const tradingViewSymbol = `COINBASE:${currency.symbol.toUpperCase()}USDC`;
+    // Use symbol override if present, else default pattern
+    const baseSymbol = currency.symbol.toLowerCase();
+    const tradingViewSymbol = symbolOverrides[baseSymbol]
+      ? `COINBASE:${symbolOverrides[baseSymbol]}`
+      : `COINBASE:${currency.symbol.toUpperCase()}USDC`;
     onCurrencySelect(tradingViewSymbol, currency.name);
   };
 
