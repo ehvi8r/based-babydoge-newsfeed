@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import MarketStats from "@/components/MarketStats";
 import CryptoChart from "@/components/CryptoChart";
 import PortfolioCard from "@/components/PortfolioCard";
@@ -16,64 +16,87 @@ const Dashboard = () => {
     name: "Bitcoin"
   });
 
+  useEffect(() => {
+    console.log('Dashboard component mounted');
+    console.log('Selected currency:', selectedCurrency);
+  }, [selectedCurrency]);
+
   const handleCurrencySelect = (symbol: string, name: string) => {
     console.log(`Selected currency: ${name} (${symbol})`);
     setSelectedCurrency({ symbol, name });
   };
 
-  console.log('Dashboard rendering...');
+  console.log('Dashboard rendering with selectedCurrency:', selectedCurrency);
 
-  return (
-    <div className="p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
-        <header className="mb-8">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-2">Based BabyDoge Trading Dashboard</h2>
-          <p className="text-muted-foreground text-sm sm:text-base">
-            Welcome back to your cryptocurrency portfolio
-          </p>
-        </header>
-        
-        <ErrorBoundary>
-          <AnnouncementBanner />
-        </ErrorBoundary>
-        
-        <ErrorBoundary>
-          <MarketStats />
-        </ErrorBoundary>
-        
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8 mb-8">
-          <div className="xl:col-span-2 space-y-6">
+  try {
+    return (
+      <div className="p-4 sm:p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto">
+          <header className="mb-8">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-2">Based BabyDoge Trading Dashboard</h2>
+            <p className="text-muted-foreground text-sm sm:text-base">
+              Welcome back to your cryptocurrency portfolio
+            </p>
+          </header>
+          
+          <ErrorBoundary>
+            <AnnouncementBanner />
+          </ErrorBoundary>
+          
+          <ErrorBoundary>
+            <MarketStats />
+          </ErrorBoundary>
+          
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8 mb-8">
+            <div className="xl:col-span-2 space-y-6">
+              <ErrorBoundary>
+                <CryptoChart symbol={selectedCurrency.symbol} name={selectedCurrency.name} />
+              </ErrorBoundary>
+              <ErrorBoundary>
+                <UniswapWidget />
+              </ErrorBoundary>
+            </div>
+            <div>
+              <ErrorBoundary>
+                <PortfolioCard />
+              </ErrorBoundary>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8 mb-8">
             <ErrorBoundary>
-              <CryptoChart symbol={selectedCurrency.symbol} name={selectedCurrency.name} />
+              <CryptoList onCurrencySelect={handleCurrencySelect} />
             </ErrorBoundary>
             <ErrorBoundary>
-              <UniswapWidget />
+              <TopBaseCurrencies onCurrencySelect={handleCurrencySelect} />
             </ErrorBoundary>
           </div>
-          <div>
+          
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8 mb-8">
             <ErrorBoundary>
-              <PortfolioCard />
+              <BaseCurrencies onCurrencySelect={handleCurrencySelect} />
             </ErrorBoundary>
           </div>
-        </div>
-        
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8 mb-8">
-          <ErrorBoundary>
-            <CryptoList onCurrencySelect={handleCurrencySelect} />
-          </ErrorBoundary>
-          <ErrorBoundary>
-            <TopBaseCurrencies onCurrencySelect={handleCurrencySelect} />
-          </ErrorBoundary>
-        </div>
-        
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8 mb-8">
-          <ErrorBoundary>
-            <BaseCurrencies onCurrencySelect={handleCurrencySelect} />
-          </ErrorBoundary>
         </div>
       </div>
-    </div>
-  );
+    );
+  } catch (error) {
+    console.error('Dashboard render error:', error);
+    return (
+      <div className="p-4 sm:p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center py-12">
+            <h3 className="text-xl font-semibold text-red-600 mb-4">
+              Dashboard Error
+            </h3>
+            <p className="text-muted-foreground">
+              There was an error loading the dashboard. Check the console for details.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 };
 
 export default Dashboard;
