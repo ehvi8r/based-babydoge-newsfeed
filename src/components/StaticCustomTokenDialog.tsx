@@ -16,7 +16,7 @@ const StaticCustomTokenDialog: React.FC = () => {
             <label className="block mb-1 text-sm font-medium" htmlFor="chain-static">
               Chain
             </label>
-            <Select defaultValue="ETH">
+            <Select defaultValue="BASE">
               <SelectTrigger id="chain-static" className="w-full">
                 <SelectValue placeholder="Select Chain" />
               </SelectTrigger>
