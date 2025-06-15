@@ -22,4 +22,13 @@ export default defineConfig(({ mode }) => ({
   define: {
     global: 'globalThis',
   },
+  optimizeDeps: {
+    include: ['@uniswap/widgets'],
+    esbuildOptions: {
+      target: 'es2020',
+    },
+  },
+  build: {
+    target: 'es2020',
+  },
 }));
