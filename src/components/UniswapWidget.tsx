@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 
 const UniswapWidget = () => {
   const [widgetError, setWidgetError] = useState<string | null>(null);
+  const [widgetKey, setWidgetKey] = useState(0);
 
   console.log('UniswapWidget rendering...');
 
@@ -35,6 +36,15 @@ const UniswapWidget = () => {
     },
   };
 
+  const BASE_USDC_ADDRESS = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
+  const BASE_CHAIN_ID = 8453;
+
+  console.log('Widget config:', {
+    chainId: BASE_CHAIN_ID,
+    outputToken: BASE_USDC_ADDRESS,
+    widgetKey
+  });
+
   if (widgetError) {
     return (
       <div className="glass-card p-6 rounded-lg animate-fade-in">
@@ -44,7 +54,10 @@ const UniswapWidget = () => {
         <div className="w-full p-4 bg-red-100 text-red-800 rounded">
           <p>Widget Error: {widgetError}</p>
           <button 
-            onClick={() => setWidgetError(null)} 
+            onClick={() => {
+              setWidgetError(null);
+              setWidgetKey(prev => prev + 1);
+            }} 
             className="mt-2 px-4 py-2 bg-red-600 text-white rounded"
           >
             Retry
@@ -62,12 +75,13 @@ const UniswapWidget = () => {
         </div>
         <div className="w-full">
           <SwapWidget
+            key={widgetKey}
             theme={theme}
             tokenList="https://gateway.ipfs.io/ipns/tokens.uniswap.org"
             width="100%"
-            defaultChainId={8453}
+            defaultChainId={BASE_CHAIN_ID}
             defaultInputTokenAddress="NATIVE"
-            defaultOutputTokenAddress="0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+            defaultOutputTokenAddress={BASE_USDC_ADDRESS}
             onError={(error) => {
               console.error('Uniswap Widget Error:', error);
               setWidgetError(error.message || 'Unknown widget error');
