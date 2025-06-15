@@ -6,12 +6,12 @@ import { fetchWithCache, BitcoinPriceData } from "@/utils/apiUtils";
 
 const fetchBitcoinPrices = async () => {
   const data = await fetchWithCache<BitcoinPriceData>(
-    "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=7&interval=daily",
+    "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=365&interval=daily",
     'bitcoin-prices',
     10 // 10 minute cache
   );
   
-  // Format data for the chart - take last 7 days
+  // Format data for the chart - take last 12 months
   return data.prices.map(([timestamp, price]: [number, number]) => ({
     date: new Date(timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
     price: Math.round(price)
@@ -30,7 +30,7 @@ const PortfolioCard = () => {
   if (isLoading) {
     return (
       <div className="glass-card p-6 rounded-lg mb-8 animate-fade-in">
-        <h2 className="text-xl font-semibold mb-6">Bitcoin Performance</h2>
+        <h2 className="text-xl font-semibold mb-6">Bitcoin Performance/Market Sentiment</h2>
         <div className="w-full h-[200px] flex items-center justify-center">
           <span className="text-muted-foreground">Loading chart data...</span>
         </div>
@@ -41,7 +41,7 @@ const PortfolioCard = () => {
   if (isError) {
     return (
       <div className="glass-card p-6 rounded-lg mb-8 animate-fade-in">
-        <h2 className="text-xl font-semibold mb-6">Bitcoin Performance</h2>
+        <h2 className="text-xl font-semibold mb-6">Bitcoin Performance/Market Sentiment</h2>
         <div className="w-full h-[200px] flex items-center justify-center">
           <div className="flex items-center gap-3 text-warning">
             <AlertTriangle className="w-5 h-5" />
@@ -57,7 +57,7 @@ const PortfolioCard = () => {
 
   return (
     <div className="glass-card p-6 rounded-lg mb-8 animate-fade-in">
-      <h2 className="text-xl font-semibold mb-6">Bitcoin Performance</h2>
+      <h2 className="text-xl font-semibold mb-6">Bitcoin Performance/Market Sentiment</h2>
       <div className="w-full h-[200px]">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={priceData}>
