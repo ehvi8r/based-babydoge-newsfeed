@@ -19,6 +19,12 @@ const Dashboard = () => {
     name: "Bitcoin"
   });
 
+  const [customToken, setCustomToken] = useState<{
+    chain: "ETH" | "BASE";
+    symbol: string;
+    address: string;
+  } | null>(null);
+
   useEffect(() => {
     console.log('Dashboard component mounted');
     console.log('Selected currency:', selectedCurrency);
@@ -27,6 +33,15 @@ const Dashboard = () => {
   const handleCurrencySelect = (symbol: string, name: string) => {
     console.log(`Selected currency: ${name} (${symbol})`);
     setSelectedCurrency({ symbol, name });
+    // Clear custom token when selecting from currency lists
+    setCustomToken(null);
+  };
+
+  const handleCustomTokenSelect = (tokenData: { chain: "ETH" | "BASE"; symbol: string; address: string }) => {
+    console.log('Custom token selected:', tokenData);
+    setCustomToken(tokenData);
+    // Clear regular currency selection when using custom token
+    setSelectedCurrency({ symbol: "", name: "" });
   };
 
   console.log('Dashboard rendering with selectedCurrency:', selectedCurrency);
@@ -50,15 +65,19 @@ const Dashboard = () => {
             <MarketStats />
           </ErrorBoundary>
 
-          {/* NEW: Custom Token Dialog as full-width separate card */}
+          {/* Custom Token Dialog as full-width separate card */}
           <div className="mb-8">
-            <StaticCustomTokenDialog />
+            <StaticCustomTokenDialog onTokenSelect={handleCustomTokenSelect} />
           </div>
 
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8 mb-0">
             <div className="col-span-1 xl:col-span-3">
               <ErrorBoundary>
-                <CryptoChart symbol={selectedCurrency.symbol} name={selectedCurrency.name} />
+                <CryptoChart 
+                  symbol={selectedCurrency.symbol} 
+                  name={selectedCurrency.name}
+                  customToken={customToken}
+                />
               </ErrorBoundary>
             </div>
           </div>
@@ -121,4 +140,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-

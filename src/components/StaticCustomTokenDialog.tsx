@@ -1,21 +1,72 @@
-import React from "react";
+
+import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 
-const StaticCustomTokenDialog: React.FC = () => {
-  // UI-only form; no handlers, just design mimic
+interface StaticCustomTokenDialogProps {
+  onTokenSelect: (tokenData: { chain: "ETH" | "BASE"; symbol: string; address: string }) => void;
+}
+
+const StaticCustomTokenDialog: React.FC<StaticCustomTokenDialogProps> = ({ onTokenSelect }) => {
+  const [chain, setChain] = useState<"ETH" | "BASE">("BASE");
+  const [symbol, setSymbol] = useState("");
+  const [address, setAddress] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleShowChart = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+
+    // Validation
+    if (!address.trim()) {
+      setError("Contract address is required.");
+      return;
+    }
+
+    if (address.trim().length < 8) {
+      setError("Contract address must be at least 8 characters long.");
+      return;
+    }
+
+    if (address.trim().length > 64) {
+      setError("Contract address must be less than 64 characters.");
+      return;
+    }
+
+    setIsLoading(true);
+    
+    try {
+      // Pass the token data to the parent component
+      onTokenSelect({
+        chain,
+        symbol: symbol.trim(),
+        address: address.trim()
+      });
+      
+      // Clear form on success
+      setSymbol("");
+      setAddress("");
+      setError(null);
+    } catch (err) {
+      setError("Failed to load token chart. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="glass-card w-full p-6 rounded-lg border border-muted bg-background shadow animate-fade-in">
       <h3 className="text-lg font-semibold mb-4 text-center">Select Custom Token</h3>
-      <form className="space-y-4 max-w-7xl mx-auto">
+      <form onSubmit={handleShowChart} className="space-y-4 max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end md:space-x-4 gap-2">
           {/* Chain (15ch) */}
           <div className="flex-1 min-w-0" style={{ maxWidth: "15ch" }}>
             <label className="block mb-1 text-sm font-medium" htmlFor="chain-static">
               Chain
             </label>
-            <Select defaultValue="BASE">
+            <Select value={chain} onValueChange={(value) => setChain(value as "ETH" | "BASE")}>
               <SelectTrigger id="chain-static" className="w-full">
                 <SelectValue placeholder="Select Chain" />
               </SelectTrigger>
@@ -33,7 +84,10 @@ const StaticCustomTokenDialog: React.FC = () => {
             <Input 
               id="symbol-static"
               placeholder="e.g. PEPE"
+              value={symbol}
+              onChange={(e) => setSymbol(e.target.value)}
               style={{ width: "25ch" }}
+              maxLength={16}
             />
           </div>
           {/* Contract Address * (45ch) */}
@@ -44,16 +98,30 @@ const StaticCustomTokenDialog: React.FC = () => {
             <Input 
               id="address-static"
               placeholder="Enter contract address"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
               style={{ width: "45ch" }}
+              maxLength={64}
+              required
             />
           </div>
           {/* Show Chart Button (15ch) */}
           <div className="flex-1 min-w-0 flex md:block" style={{ maxWidth: "15ch" }}>
-            <Button type="button" className="w-full" style={{ width: "15ch", minWidth: "100px" }} disabled>
-              Show Chart
+            <Button 
+              type="submit" 
+              className="w-full" 
+              style={{ width: "15ch", minWidth: "100px" }}
+              disabled={isLoading}
+            >
+              {isLoading ? "Loading..." : "Show Chart"}
             </Button>
           </div>
         </div>
+        {error && (
+          <div className="text-destructive text-sm mt-2">
+            {error}
+          </div>
+        )}
       </form>
     </div>
   );
