@@ -43,12 +43,16 @@ const PortfolioCard = () => {
       <div className="glass-card p-6 rounded-lg mb-8 animate-fade-in">
         <h2 className="text-xl font-semibold mb-6">Bitcoin Performance/Market Sentiment</h2>
         <div className="w-full h-[200px] flex items-center justify-center">
-          <div className="flex items-center gap-3 text-warning">
-            <AlertTriangle className="w-5 h-5" />
-            <div className="text-center">
-              <p className="font-medium">Chart Unavailable</p>
-              <p className="text-sm text-muted-foreground">Unable to load Bitcoin price data</p>
+          <div className="bg-secondary/20 rounded-lg p-8 text-center w-full">
+            <div className="flex items-center justify-center gap-3 text-warning mb-4">
+              <AlertTriangle className="w-5 h-5" />
+              <p className="font-medium">Chart Temporarily Unavailable</p>
             </div>
+            <p className="text-sm text-muted-foreground">
+              Bitcoin price data is currently unavailable due to API issues.
+              <br />
+              Chart will be restored once the service is stable.
+            </p>
           </div>
         </div>
       </div>
