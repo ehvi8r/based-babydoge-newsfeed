@@ -93,7 +93,7 @@ const StaticCustomTokenDialog: React.FC<StaticCustomTokenDialogProps> = ({ onTok
           {/* Contract Address * (45ch) */}
           <div className="flex-1 min-w-0" style={{ maxWidth: "45ch" }}>
             <label className="block mb-1 text-sm font-medium" htmlFor="address-static">
-              Contract Address <span className="text-destructive">*(required)</span>
+              Contract Address *(required)
             </label>
             <Input 
               id="address-static"
@@ -111,9 +111,9 @@ const StaticCustomTokenDialog: React.FC<StaticCustomTokenDialogProps> = ({ onTok
               type="submit" 
               className="w-full" 
               style={{ width: "15ch", minWidth: "100px" }}
-              disabled={isLoading}
+              disabled={true}
             >
-              {isLoading ? "Loading..." : "Show Chart"}
+              Show Chart
             </Button>
           </div>
         </div>
