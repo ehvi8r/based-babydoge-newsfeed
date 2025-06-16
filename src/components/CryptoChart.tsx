@@ -45,9 +45,10 @@ const CryptoChart = ({ symbol = "BINANCE:BTCUSDT", name = "Bitcoin", customToken
       }`
     : name;
 
+  // Always ensure we have a valid symbol to display
   const displaySymbol = custom
     ? computeSymbol(custom.chain, custom.address)
-    : symbol;
+    : symbol || "BINANCE:BTCUSDT";
 
   return (
     <div className="glass-card p-6 rounded-lg mb-8 animate-fade-in">

@@ -40,8 +40,7 @@ const Dashboard = () => {
   const handleCustomTokenSelect = (tokenData: { chain: "ETH" | "BASE"; symbol: string; address: string }) => {
     console.log('Custom token selected:', tokenData);
     setCustomToken(tokenData);
-    // Clear regular currency selection when using custom token
-    setSelectedCurrency({ symbol: "", name: "" });
+    // Don't clear the regular currency selection anymore - let the chart component handle the display logic
   };
 
   console.log('Dashboard rendering with selectedCurrency:', selectedCurrency);
