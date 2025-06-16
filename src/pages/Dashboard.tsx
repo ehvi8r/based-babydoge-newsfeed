@@ -7,7 +7,7 @@ import CryptoList from "@/components/CryptoList";
 import TopBaseCurrencies from "@/components/TopBaseCurrencies";
 import BaseCurrencies from "@/components/BaseCurrencies";
 import AnnouncementBanner from "@/components/AnnouncementBanner";
-// import UniswapWidget from "@/components/UniswapWidget";
+import UniswapWidget from "@/components/UniswapWidget";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import ResourceLinksRow from "@/components/ResourceLinksRow";
 import StaticCustomTokenDialog from "@/components/StaticCustomTokenDialog";
@@ -95,13 +95,18 @@ const Dashboard = () => {
                 <PortfolioCard />
               </ErrorBoundary>
             </div>
-            {/* Temporarily disabled UniswapWidget due to IPFS gateway issues
             <div className="col-span-1 xl:col-span-3">
-              <ErrorBoundary>
-                <UniswapWidget />
-              </ErrorBoundary>
+              <div className="glass-card p-6 rounded-lg animate-fade-in">
+                <h2 className="text-xl font-semibold mb-4">Uniswap Widget</h2>
+                <div className="bg-secondary/20 rounded-lg p-8 text-center">
+                  <p className="text-muted-foreground">
+                    UniswapWidget temporarily disabled due to IPFS gateway issues.
+                    <br />
+                    Will be restored once the service is stable.
+                  </p>
+                </div>
+              </div>
             </div>
-            */}
           </div>
 
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8 mb-8">
